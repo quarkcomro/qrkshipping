@@ -32,10 +32,12 @@ jobs:
           mkdir -p /tmp/qrkshipping-source
           tar -xJf /tmp/qrkshipping-source.tar.xz -C /tmp/qrkshipping-source
 
-      - name: Replace bootstrap tree with approved source
+      - name: Replace transport files with approved module source
         run: |
-          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-          cp -a /tmp/qrkshipping-source/. .
+          find . -mindepth 1 -maxdepth 1 ! -name .git ! -name .github -exec rm -rf {} +
+          rm -rf .github/bootstrap
+          find /tmp/qrkshipping-source -mindepth 1 -maxdepth 1 ! -name .github \
+            -exec cp -a {} . \;
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
