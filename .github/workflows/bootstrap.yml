@@ -1,0 +1,37 @@
+name: Bootstrap approved Increment 1 source
+
+on:
+  push:
+    branches:
+      - agent/increment-1-foundation
+    paths:
+      - .github/bootstrap/READY
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out bootstrap commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Decode approved source payload
+        run: |
+          mkdir -p /tmp/qrkshipping-source
+          cat .github/bootstrap/chunk* \
+            | base64 --decode \
+            | tar -xJf - -C /tmp/qrkshipping-source
+
+      - name: Replace bootstrap tree with approved source
+        run: |
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a /tmp/qrkshipping-source/. .
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Implement Increment 1 foundation'
+          git push origin HEAD:agent/increment-1-foundation
