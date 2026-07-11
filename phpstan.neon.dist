@@ -1,0 +1,14 @@
+parameters:
+  level: 8
+  paths:
+    - qrkshipping.php
+    - src
+    - tests
+    - scripts
+    - .php-cs-fixer.dist.php
+  stubFiles:
+    - stubs/prestashop.php
+  tmpDir: .phpstan.cache
+  treatPhpDocTypesAsCertain: true
+  reportUnmatchedIgnoredErrors: true
+  checkMissingIterableValueType: true

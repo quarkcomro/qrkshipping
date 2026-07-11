@@ -1,0 +1,72 @@
+{
+  "name": "quark/qrkshipping",
+  "description": "Greenfield provider-neutral shipping foundation for PrestaShop 9.1",
+  "type": "prestashop-module",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "QUARK"
+    }
+  ],
+  "require": {
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-openssl": "*",
+    "php": ">=8.2.32"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.75",
+    "phpstan/phpstan": "^1.12",
+    "phpunit/phpunit": "^11.5",
+    "prestashop/php-dev-tools": "^5.0",
+    "squizlabs/php_codesniffer": "^3.13",
+    "symfony/http-foundation": "~6.4.0",
+    "symfony/http-kernel": "~6.4.0",
+    "symfony/security-csrf": "~6.4.0",
+    "symfony/yaml": "~6.4.0",
+    "twig/twig": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Qrk\\Commerce\\Shipping\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Qrk\\Commerce\\Shipping\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "allow-plugins": {},
+    "optimize-autoloader": true,
+    "prepend-autoloader": false,
+    "sort-packages": true
+  },
+  "scripts": {
+    "validate:composer": "composer validate --strict --no-check-publish",
+    "lint": "php scripts/lint.php",
+    "validate:config": "php scripts/validate-config.php",
+    "architecture": "php scripts/architecture-check.php",
+    "test": "phpunit",
+    "analyse": "phpstan analyse --configuration=phpstan.neon.dist --no-progress",
+    "cs:psr12": "phpcs --standard=phpcs.xml.dist",
+    "cs:prestashop": "php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff --using-cache=no",
+    "scan": "php scripts/artifact-scan.php .",
+    "smoke": "php scripts/smoke-test.php",
+    "quality": [
+      "@validate:composer",
+      "@lint",
+      "@validate:config",
+      "@architecture",
+      "@test:unit",
+      "@analyse",
+      "@cs:psr12",
+      "@cs:prestashop",
+      "@scan",
+      "@smoke"
+    ],
+    "build": "php scripts/build.php",
+    "test:unit": "phpunit --exclude-group database",
+    "test:database": "phpunit --group database"
+  }
+}

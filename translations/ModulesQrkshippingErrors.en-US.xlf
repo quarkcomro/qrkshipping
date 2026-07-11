@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="en-US" datatype="plaintext" original="Modules.Qrkshipping.Errors">
+    <body>
+      <trans-unit id="1194ba90eca8ee0c">
+        <source>MariaDB %current% is installed; QRK Shipping requires MariaDB %required% or newer.</source>
+        <target>MariaDB %current% is installed; QRK Shipping requires MariaDB %required% or newer.</target>
+      </trans-unit>
+      <trans-unit id="a09a172b91109939">
+        <source>MySQL %current% is installed; QRK Shipping requires MySQL %required% or newer.</source>
+        <target>MySQL %current% is installed; QRK Shipping requires MySQL %required% or newer.</target>
+      </trans-unit>
+      <trans-unit id="29dcd078738b95fc">
+        <source>PHP %current% is installed; QRK Shipping requires PHP 8.2.32 or newer.</source>
+        <target>PHP %current% is installed; QRK Shipping requires PHP 8.2.32 or newer.</target>
+      </trans-unit>
+      <trans-unit id="74189733ede37318">
+        <source>PrestaShop %current% is outside the supported range: 9.1.4 or newer and lower than 10.0.</source>
+        <target>PrestaShop %current% is outside the supported range: 9.1.4 or newer and lower than 10.0.</target>
+      </trans-unit>
+      <trans-unit id="f3d42f8de64eb8e5">
+        <source>Symfony %current% is installed; QRK Shipping requires the PrestaShop-supplied Symfony 6.4 runtime.</source>
+        <target>Symfony %current% is installed; QRK Shipping requires the PrestaShop-supplied Symfony 6.4 runtime.</target>
+      </trans-unit>
+      <trans-unit id="8a4ae9d2ba795710">
+        <source>The QRK Shipping foundation could not be installed safely. No incompatible schema was overwritten.</source>
+        <target>The QRK Shipping foundation could not be installed safely. No incompatible schema was overwritten.</target>
+      </trans-unit>
+      <trans-unit id="b529714c2b17096d">
+        <source>The Symfony runtime supplied by PrestaShop is unavailable.</source>
+        <target>The Symfony runtime supplied by PrestaShop is unavailable.</target>
+      </trans-unit>
+      <trans-unit id="73a1736a632d3b71">
+        <source>The change could not be saved safely.</source>
+        <target>The change could not be saved safely.</target>
+      </trans-unit>
+      <trans-unit id="b3522d211257f3e2">
+        <source>The database charset is %current%; utf8mb4 is required.</source>
+        <target>The database charset is %current%; utf8mb4 is required.</target>
+      </trans-unit>
+      <trans-unit id="600d966868bd9bf1">
+        <source>The database collation %current% is not an utf8mb4 collation.</source>
+        <target>The database collation %current% is not an utf8mb4 collation.</target>
+      </trans-unit>
+      <trans-unit id="497c0c39a0ba5ee6">
+        <source>The database default engine is %current%; InnoDB is required.</source>
+        <target>The database default engine is %current%; InnoDB is required.</target>
+      </trans-unit>
+      <trans-unit id="90c33e5ebc2a6151">
+        <source>The database runtime could not be verified safely.</source>
+        <target>The database runtime could not be verified safely.</target>
+      </trans-unit>
+      <trans-unit id="3c109ed25c0a0f06">
+        <source>The database server version could not be identified safely.</source>
+        <target>The database server version could not be identified safely.</target>
+      </trans-unit>
+      <trans-unit id="df61d3e9b4d2cdd2">
+        <source>The provider-account state could not be read safely.</source>
+        <target>The provider-account state could not be read safely.</target>
+      </trans-unit>
+      <trans-unit id="cd67601252357fc9">
+        <source>The required PHP extension "%extension%" is missing.</source>
+        <target>The required PHP extension "%extension%" is missing.</target>
+      </trans-unit>
+      <trans-unit id="ef156539b9db3e5f">
+        <source>The security token is invalid. Please retry.</source>
+        <target>The security token is invalid. Please retry.</target>
+      </trans-unit>
+      <trans-unit id="4d4523d14cf69aaa">
+        <source>The submitted values are invalid.</source>
+        <target>The submitted values are invalid.</target>
+      </trans-unit>
+      <trans-unit id="e72d4e0b4627775f">
+        <source>Uninstall was stopped because encrypted secrets could not be removed safely.</source>
+        <target>Uninstall was stopped because encrypted secrets could not be removed safely.</target>
+      </trans-unit>
+      <trans-unit id="ca184496974204a0">
+        <source>Unavailable</source>
+        <target>Unavailable</target>
+      </trans-unit>
+      <trans-unit id="42c9000f4bf0a3d0">
+        <source>The diagnostic preference could not be read safely. Editing is disabled.</source>
+        <target>The diagnostic preference could not be read safely. Editing is disabled.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

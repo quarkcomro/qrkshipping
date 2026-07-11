@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="ro-RO" datatype="plaintext" original="Modules.Qrkshipping.Errors">
+    <body>
+      <trans-unit id="1194ba90eca8ee0c">
+        <source>MariaDB %current% is installed; QRK Shipping requires MariaDB %required% or newer.</source>
+        <target>Este instalat MariaDB %current%; QRK Shipping necesită MariaDB %required% sau mai nou.</target>
+      </trans-unit>
+      <trans-unit id="a09a172b91109939">
+        <source>MySQL %current% is installed; QRK Shipping requires MySQL %required% or newer.</source>
+        <target>Este instalat MySQL %current%; QRK Shipping necesită MySQL %required% sau mai nou.</target>
+      </trans-unit>
+      <trans-unit id="29dcd078738b95fc">
+        <source>PHP %current% is installed; QRK Shipping requires PHP 8.2.32 or newer.</source>
+        <target>Este instalat PHP %current%; QRK Shipping necesită PHP 8.2.32 sau mai nou.</target>
+      </trans-unit>
+      <trans-unit id="74189733ede37318">
+        <source>PrestaShop %current% is outside the supported range: 9.1.4 or newer and lower than 10.0.</source>
+        <target>PrestaShop %current% este în afara intervalului acceptat: minimum 9.1.4 și mai mic decât 10.0.</target>
+      </trans-unit>
+      <trans-unit id="f3d42f8de64eb8e5">
+        <source>Symfony %current% is installed; QRK Shipping requires the PrestaShop-supplied Symfony 6.4 runtime.</source>
+        <target>Este instalat Symfony %current%; QRK Shipping necesită runtime-ul Symfony 6.4 furnizat de PrestaShop.</target>
+      </trans-unit>
+      <trans-unit id="8a4ae9d2ba795710">
+        <source>The QRK Shipping foundation could not be installed safely. No incompatible schema was overwritten.</source>
+        <target>Fundația QRK Shipping nu a putut fi instalată în siguranță. Nicio schemă incompatibilă nu a fost suprascrisă.</target>
+      </trans-unit>
+      <trans-unit id="b529714c2b17096d">
+        <source>The Symfony runtime supplied by PrestaShop is unavailable.</source>
+        <target>Runtime-ul Symfony furnizat de PrestaShop nu este disponibil.</target>
+      </trans-unit>
+      <trans-unit id="73a1736a632d3b71">
+        <source>The change could not be saved safely.</source>
+        <target>Modificarea nu a putut fi salvată în siguranță.</target>
+      </trans-unit>
+      <trans-unit id="b3522d211257f3e2">
+        <source>The database charset is %current%; utf8mb4 is required.</source>
+        <target>Setul de caractere al bazei de date este %current%; este obligatoriu utf8mb4.</target>
+      </trans-unit>
+      <trans-unit id="600d966868bd9bf1">
+        <source>The database collation %current% is not an utf8mb4 collation.</source>
+        <target>Colaționarea bazei de date %current% nu este o colaționare utf8mb4.</target>
+      </trans-unit>
+      <trans-unit id="497c0c39a0ba5ee6">
+        <source>The database default engine is %current%; InnoDB is required.</source>
+        <target>Motorul implicit al bazei de date este %current%; este obligatoriu InnoDB.</target>
+      </trans-unit>
+      <trans-unit id="90c33e5ebc2a6151">
+        <source>The database runtime could not be verified safely.</source>
+        <target>Runtime-ul bazei de date nu a putut fi verificat în siguranță.</target>
+      </trans-unit>
+      <trans-unit id="3c109ed25c0a0f06">
+        <source>The database server version could not be identified safely.</source>
+        <target>Versiunea serverului de baze de date nu a putut fi identificată în siguranță.</target>
+      </trans-unit>
+      <trans-unit id="df61d3e9b4d2cdd2">
+        <source>The provider-account state could not be read safely.</source>
+        <target>Starea contului de furnizor nu a putut fi citită în siguranță.</target>
+      </trans-unit>
+      <trans-unit id="cd67601252357fc9">
+        <source>The required PHP extension "%extension%" is missing.</source>
+        <target>Extensia PHP obligatorie „%extension%” lipsește.</target>
+      </trans-unit>
+      <trans-unit id="ef156539b9db3e5f">
+        <source>The security token is invalid. Please retry.</source>
+        <target>Tokenul de securitate este invalid. Reîncercați.</target>
+      </trans-unit>
+      <trans-unit id="4d4523d14cf69aaa">
+        <source>The submitted values are invalid.</source>
+        <target>Valorile trimise sunt invalide.</target>
+      </trans-unit>
+      <trans-unit id="e72d4e0b4627775f">
+        <source>Uninstall was stopped because encrypted secrets could not be removed safely.</source>
+        <target>Dezinstalarea a fost oprită deoarece secretele criptate nu au putut fi eliminate în siguranță.</target>
+      </trans-unit>
+      <trans-unit id="ca184496974204a0">
+        <source>Unavailable</source>
+        <target>Indisponibil</target>
+      </trans-unit>
+      <trans-unit id="42c9000f4bf0a3d0">
+        <source>The diagnostic preference could not be read safely. Editing is disabled.</source>
+        <target>Preferința pentru diagnostic nu a putut fi citită în siguranță. Editarea este dezactivată.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

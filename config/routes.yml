@@ -1,0 +1,38 @@
+admin_qrkshipping_dashboard:
+  path: /qrkshipping
+  methods: [GET]
+  defaults:
+    _controller: 'Qrk\Commerce\Shipping\Controller\Admin\DashboardController::indexAction'
+    _legacy_controller: 'AdminQrkShippingDashboard'
+    _legacy_link: 'AdminQrkShippingDashboard'
+
+admin_qrkshipping_preferences:
+  path: /qrkshipping/preferences
+  methods: [GET]
+  defaults:
+    _controller: 'Qrk\Commerce\Shipping\Controller\Admin\PreferencesController::indexAction'
+    _legacy_controller: 'AdminQrkShippingPreferences'
+    _legacy_link: 'AdminQrkShippingPreferences'
+
+admin_qrkshipping_preferences_update:
+  path: /qrkshipping/preferences
+  methods: [POST]
+  defaults:
+    _controller: 'Qrk\Commerce\Shipping\Controller\Admin\PreferencesController::updateAction'
+    _legacy_controller: 'AdminQrkShippingPreferences'
+
+admin_qrkshipping_help:
+  path: /qrkshipping/help
+  methods: [GET]
+  defaults:
+    _controller: 'Qrk\Commerce\Shipping\Controller\Admin\HelpController::indexAction'
+    _legacy_controller: 'AdminQrkShippingHelp'
+    _legacy_link: 'AdminQrkShippingHelp'
+
+admin_qrkshipping_diagnostics:
+  path: /qrkshipping/diagnostics
+  methods: [GET]
+  defaults:
+    _controller: 'Qrk\Commerce\Shipping\Controller\Admin\DiagnosticsController::indexAction'
+    _legacy_controller: 'AdminQrkShippingDiagnostics'
+    _legacy_link: 'AdminQrkShippingDiagnostics'

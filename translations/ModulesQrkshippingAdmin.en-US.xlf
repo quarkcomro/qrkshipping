@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="en-US" datatype="plaintext" original="Modules.Qrkshipping.Admin">
+    <body>
+      <trans-unit id="a2004c28503e1772">
+        <source>All stores</source>
+        <target>All stores</target>
+      </trans-unit>
+      <trans-unit id="ca059c407773cf27">
+        <source>Attention required</source>
+        <target>Attention required</target>
+      </trans-unit>
+      <trans-unit id="da9e7b4f5f30cb1e">
+        <source>Cargus provider-account shell</source>
+        <target>Cargus provider-account shell</target>
+      </trans-unit>
+      <trans-unit id="7032972442eeaf3e">
+        <source>Catalog default</source>
+        <target>Catalog default</target>
+      </trans-unit>
+      <trans-unit id="7cd06fb4d4b63735">
+        <source>Checkout cost methods return unavailable without database writes.</source>
+        <target>Checkout cost methods return unavailable without database writes.</target>
+      </trans-unit>
+      <trans-unit id="d0f02923e471b356">
+        <source>Current context:</source>
+        <target>Current context:</target>
+      </trans-unit>
+      <trans-unit id="1e42b1cce81cc409">
+        <source>Current status:</source>
+        <target>Current status:</target>
+      </trans-unit>
+      <trans-unit id="4cb67b67789fb35d">
+        <source>Dashboard</source>
+        <target>Dashboard</target>
+      </trans-unit>
+      <trans-unit id="402f7bf49e0fce3d">
+        <source>Detail level</source>
+        <target>Detail level</target>
+      </trans-unit>
+      <trans-unit id="a95e1d5de2d30c2a">
+        <source>Detailed</source>
+        <target>Detailed</target>
+      </trans-unit>
+      <trans-unit id="41d70c827a9b5b53">
+        <source>Diagnostic preferences</source>
+        <target>Diagnostic preferences</target>
+      </trans-unit>
+      <trans-unit id="878bcc193d1404f6">
+        <source>Diagnostic preferences were saved.</source>
+        <target>Diagnostic preferences were saved.</target>
+      </trans-unit>
+      <trans-unit id="6937c5b68a83d1ba">
+        <source>Diagnostics</source>
+        <target>Diagnostics</target>
+      </trans-unit>
+      <trans-unit id="831f53dc5e961204">
+        <source>Effective source:</source>
+        <target>Effective source:</target>
+      </trans-unit>
+      <trans-unit id="db4ad23a92ee355a">
+        <source>Foundation status</source>
+        <target>Foundation status</target>
+      </trans-unit>
+      <trans-unit id="c89e19d330074682">
+        <source>Healthy</source>
+        <target>Healthy</target>
+      </trans-unit>
+      <trans-unit id="62ecc88bd074cf30">
+        <source>Help</source>
+        <target>Help</target>
+      </trans-unit>
+      <trans-unit id="d2aa1ed04df857ad">
+        <source>Increment 1 boundaries</source>
+        <target>Increment 1 boundaries</target>
+      </trans-unit>
+      <trans-unit id="185dda749ce30a84">
+        <source>Inheritance order: shop override, then shop-group override, then all-stores value, then catalog default.</source>
+        <target>Inheritance order: shop override, then shop-group override, then all-stores value, then catalog default.</target>
+      </trans-unit>
+      <trans-unit id="f1c1cb1116146a95">
+        <source>Initial provider</source>
+        <target>Initial provider</target>
+      </trans-unit>
+      <trans-unit id="f35fa923b368b338">
+        <source>Internal label</source>
+        <target>Internal label</target>
+      </trans-unit>
+      <trans-unit id="826785f2f0db78c6">
+        <source>Module version</source>
+        <target>Module version</target>
+      </trans-unit>
+      <trans-unit id="ca917b923aa1b289">
+        <source>No AWB, label, tracking, PUDO, synchronization, parcelization, or commercial pricing is implemented.</source>
+        <target>No AWB, label, tracking, PUDO, synchronization, parcelization, or commercial pricing is implemented.</target>
+      </trans-unit>
+      <trans-unit id="56bb46682f4238ba">
+        <source>No carrier is created or activated.</source>
+        <target>No carrier is created or activated.</target>
+      </trans-unit>
+      <trans-unit id="3d19991376b7d4f8">
+        <source>No draft provider account exists for this shop.</source>
+        <target>No draft provider account exists for this shop.</target>
+      </trans-unit>
+      <trans-unit id="2bb291398b17b635">
+        <source>No provider HTTP request is made.</source>
+        <target>No provider HTTP request is made.</target>
+      </trans-unit>
+      <trans-unit id="4cf0f238cdfd8253">
+        <source>Only an internal draft label is stored in this increment. No credentials or live connection are accepted.</source>
+        <target>Only an internal draft label is stored in this increment. No credentials or live connection are accepted.</target>
+      </trans-unit>
+      <trans-unit id="bd9fb16e907101f2">
+        <source>Open preferences</source>
+        <target>Open preferences</target>
+      </trans-unit>
+      <trans-unit id="2c6b1da58f61696d">
+        <source>Open read-only diagnostics</source>
+        <target>Open read-only diagnostics</target>
+      </trans-unit>
+      <trans-unit id="d4208c17a643aad3">
+        <source>Preferences</source>
+        <target>Preferences</target>
+      </trans-unit>
+      <trans-unit id="2982b9d31bb71780">
+        <source>Provider accounts are isolated per shop. Select one shop before editing.</source>
+        <target>Provider accounts are isolated per shop. Select one shop before editing.</target>
+      </trans-unit>
+      <trans-unit id="bdbe09e75c797eff">
+        <source>Provider-neutral shipping foundation. This increment does not create carriers or contact providers.</source>
+        <target>Provider-neutral shipping foundation. This increment does not create carriers or contact providers.</target>
+      </trans-unit>
+      <trans-unit id="89505fb294439ecb">
+        <source>QRK Shipping</source>
+        <target>QRK Shipping</target>
+      </trans-unit>
+      <trans-unit id="7e81bc1d7cc86b3c">
+        <source>QRK Shipping diagnostics</source>
+        <target>QRK Shipping diagnostics</target>
+      </trans-unit>
+      <trans-unit id="55c552aaed0207ae">
+        <source>QRK Shipping help</source>
+        <target>QRK Shipping help</target>
+      </trans-unit>
+      <trans-unit id="08440142557cd5dc">
+        <source>QRK Shipping preferences</source>
+        <target>QRK Shipping preferences</target>
+      </trans-unit>
+      <trans-unit id="ad661809829ad860">
+        <source>QRK Shipping sections</source>
+        <target>QRK Shipping sections</target>
+      </trans-unit>
+      <trans-unit id="b1d3ecfbb9b9edfe">
+        <source>Remove the override at this context and use inheritance.</source>
+        <target>Remove the override at this context and use inheritance.</target>
+      </trans-unit>
+      <trans-unit id="b55755cf220e56f7">
+        <source>Save diagnostic preference</source>
+        <target>Save diagnostic preference</target>
+      </trans-unit>
+      <trans-unit id="782a80b5d13c53f9">
+        <source>Save draft label</source>
+        <target>Save draft label</target>
+      </trans-unit>
+      <trans-unit id="a3b211b3d48a8527">
+        <source>Schema version</source>
+        <target>Schema version</target>
+      </trans-unit>
+      <trans-unit id="1f1ee138dd7cc075">
+        <source>Select one shop to view or edit its provider-account shell.</source>
+        <target>Select one shop to view or edit its provider-account shell.</target>
+      </trans-unit>
+      <trans-unit id="05c5932fa7e6f852">
+        <source>Shop #%id%</source>
+        <target>Shop #%id%</target>
+      </trans-unit>
+      <trans-unit id="c0dca80fc8db0a1a">
+        <source>Shop group</source>
+        <target>Shop group</target>
+      </trans-unit>
+      <trans-unit id="540f96bdbee0b0a2">
+        <source>Shop group #%id%</source>
+        <target>Shop group #%id%</target>
+      </trans-unit>
+      <trans-unit id="57e7a4109f0841e6">
+        <source>Single shop</source>
+        <target>Single shop</target>
+      </trans-unit>
+      <trans-unit id="d875f7d9427652c3">
+        <source>Standard</source>
+        <target>Standard</target>
+      </trans-unit>
+      <trans-unit id="b7dc9ef42f82f81f">
+        <source>Status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="93f83d9464343844">
+        <source>The Cargus draft account label was saved.</source>
+        <target>The Cargus draft account label was saved.</target>
+      </trans-unit>
+      <trans-unit id="d0f129e8aee03f5d">
+        <source>This foundation is intentionally operationally inert.</source>
+        <target>This foundation is intentionally operationally inert.</target>
+      </trans-unit>
+      <trans-unit id="3d4d5ec51f0b065e">
+        <source>Uninstall QRK Shipping? Encrypted secrets will be deleted; non-secret foundation data will be retained.</source>
+        <target>Uninstall QRK Shipping? Encrypted secrets will be deleted; non-secret foundation data will be retained.</target>
+      </trans-unit>
+      <trans-unit id="91d492e6d8189bf2">
+        <source>Unknown scope</source>
+        <target>Unknown scope</target>
+      </trans-unit>
+      <trans-unit id="8a275619450ea2f6">
+        <source>group #%id%</source>
+        <target>group #%id%</target>
+      </trans-unit>
+      <trans-unit id="7fbdc55046b4f1d8">
+        <source>inherited</source>
+        <target>inherited</target>
+      </trans-unit>
+      <trans-unit id="58916fa85382174f">
+        <source>shop #%id%</source>
+        <target>shop #%id%</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

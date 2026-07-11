@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="ro-RO" datatype="plaintext" original="Modules.Qrkshipping.Admin">
+    <body>
+      <trans-unit id="a2004c28503e1772">
+        <source>All stores</source>
+        <target>Toate magazinele</target>
+      </trans-unit>
+      <trans-unit id="ca059c407773cf27">
+        <source>Attention required</source>
+        <target>Necesită atenție</target>
+      </trans-unit>
+      <trans-unit id="da9e7b4f5f30cb1e">
+        <source>Cargus provider-account shell</source>
+        <target>Structura contului de furnizor Cargus</target>
+      </trans-unit>
+      <trans-unit id="7032972442eeaf3e">
+        <source>Catalog default</source>
+        <target>Valoare implicită din catalog</target>
+      </trans-unit>
+      <trans-unit id="7cd06fb4d4b63735">
+        <source>Checkout cost methods return unavailable without database writes.</source>
+        <target>Metodele de cost din checkout returnează indisponibil fără scrieri în baza de date.</target>
+      </trans-unit>
+      <trans-unit id="d0f02923e471b356">
+        <source>Current context:</source>
+        <target>Context curent:</target>
+      </trans-unit>
+      <trans-unit id="1e42b1cce81cc409">
+        <source>Current status:</source>
+        <target>Stare curentă:</target>
+      </trans-unit>
+      <trans-unit id="4cb67b67789fb35d">
+        <source>Dashboard</source>
+        <target>Panou principal</target>
+      </trans-unit>
+      <trans-unit id="402f7bf49e0fce3d">
+        <source>Detail level</source>
+        <target>Nivel de detaliu</target>
+      </trans-unit>
+      <trans-unit id="a95e1d5de2d30c2a">
+        <source>Detailed</source>
+        <target>Detaliat</target>
+      </trans-unit>
+      <trans-unit id="41d70c827a9b5b53">
+        <source>Diagnostic preferences</source>
+        <target>Preferințe de diagnosticare</target>
+      </trans-unit>
+      <trans-unit id="878bcc193d1404f6">
+        <source>Diagnostic preferences were saved.</source>
+        <target>Preferințele de diagnosticare au fost salvate.</target>
+      </trans-unit>
+      <trans-unit id="6937c5b68a83d1ba">
+        <source>Diagnostics</source>
+        <target>Diagnosticare</target>
+      </trans-unit>
+      <trans-unit id="831f53dc5e961204">
+        <source>Effective source:</source>
+        <target>Sursă efectivă:</target>
+      </trans-unit>
+      <trans-unit id="db4ad23a92ee355a">
+        <source>Foundation status</source>
+        <target>Starea fundației</target>
+      </trans-unit>
+      <trans-unit id="c89e19d330074682">
+        <source>Healthy</source>
+        <target>Funcțional</target>
+      </trans-unit>
+      <trans-unit id="62ecc88bd074cf30">
+        <source>Help</source>
+        <target>Ajutor</target>
+      </trans-unit>
+      <trans-unit id="d2aa1ed04df857ad">
+        <source>Increment 1 boundaries</source>
+        <target>Limitele Incrementului 1</target>
+      </trans-unit>
+      <trans-unit id="185dda749ce30a84">
+        <source>Inheritance order: shop override, then shop-group override, then all-stores value, then catalog default.</source>
+        <target>Ordinea moștenirii: suprascriere magazin, apoi grup de magazine, apoi valoare pentru toate magazinele, apoi valoarea implicită din catalog.</target>
+      </trans-unit>
+      <trans-unit id="f1c1cb1116146a95">
+        <source>Initial provider</source>
+        <target>Furnizor inițial</target>
+      </trans-unit>
+      <trans-unit id="f35fa923b368b338">
+        <source>Internal label</source>
+        <target>Etichetă internă</target>
+      </trans-unit>
+      <trans-unit id="826785f2f0db78c6">
+        <source>Module version</source>
+        <target>Versiunea modulului</target>
+      </trans-unit>
+      <trans-unit id="ca917b923aa1b289">
+        <source>No AWB, label, tracking, PUDO, synchronization, parcelization, or commercial pricing is implemented.</source>
+        <target>Nu sunt implementate AWB, etichete, urmărire, PUDO, sincronizare, coletizare sau tarifare comercială.</target>
+      </trans-unit>
+      <trans-unit id="56bb46682f4238ba">
+        <source>No carrier is created or activated.</source>
+        <target>Nu este creat sau activat niciun transportator.</target>
+      </trans-unit>
+      <trans-unit id="3d19991376b7d4f8">
+        <source>No draft provider account exists for this shop.</source>
+        <target>Nu există un cont de furnizor în stare de ciornă pentru acest magazin.</target>
+      </trans-unit>
+      <trans-unit id="2bb291398b17b635">
+        <source>No provider HTTP request is made.</source>
+        <target>Nu este efectuată nicio cerere HTTP către furnizor.</target>
+      </trans-unit>
+      <trans-unit id="4cf0f238cdfd8253">
+        <source>Only an internal draft label is stored in this increment. No credentials or live connection are accepted.</source>
+        <target>În acest increment se stochează doar o etichetă internă de ciornă. Nu sunt acceptate credențiale sau conexiuni live.</target>
+      </trans-unit>
+      <trans-unit id="bd9fb16e907101f2">
+        <source>Open preferences</source>
+        <target>Deschide preferințele</target>
+      </trans-unit>
+      <trans-unit id="2c6b1da58f61696d">
+        <source>Open read-only diagnostics</source>
+        <target>Deschide diagnosticarea doar în citire</target>
+      </trans-unit>
+      <trans-unit id="d4208c17a643aad3">
+        <source>Preferences</source>
+        <target>Preferințe</target>
+      </trans-unit>
+      <trans-unit id="2982b9d31bb71780">
+        <source>Provider accounts are isolated per shop. Select one shop before editing.</source>
+        <target>Conturile de furnizor sunt izolate pe magazin. Selectați un singur magazin înainte de editare.</target>
+      </trans-unit>
+      <trans-unit id="bdbe09e75c797eff">
+        <source>Provider-neutral shipping foundation. This increment does not create carriers or contact providers.</source>
+        <target>Fundație neutră față de furnizor pentru livrare. Acest increment nu creează transportatori și nu contactează furnizori.</target>
+      </trans-unit>
+      <trans-unit id="89505fb294439ecb">
+        <source>QRK Shipping</source>
+        <target>QRK Shipping</target>
+      </trans-unit>
+      <trans-unit id="7e81bc1d7cc86b3c">
+        <source>QRK Shipping diagnostics</source>
+        <target>Diagnosticare QRK Shipping</target>
+      </trans-unit>
+      <trans-unit id="55c552aaed0207ae">
+        <source>QRK Shipping help</source>
+        <target>Ajutor QRK Shipping</target>
+      </trans-unit>
+      <trans-unit id="08440142557cd5dc">
+        <source>QRK Shipping preferences</source>
+        <target>Preferințe QRK Shipping</target>
+      </trans-unit>
+      <trans-unit id="ad661809829ad860">
+        <source>QRK Shipping sections</source>
+        <target>Secțiuni QRK Shipping</target>
+      </trans-unit>
+      <trans-unit id="b1d3ecfbb9b9edfe">
+        <source>Remove the override at this context and use inheritance.</source>
+        <target>Elimină suprascrierea din acest context și folosește moștenirea.</target>
+      </trans-unit>
+      <trans-unit id="b55755cf220e56f7">
+        <source>Save diagnostic preference</source>
+        <target>Salvează preferința de diagnosticare</target>
+      </trans-unit>
+      <trans-unit id="782a80b5d13c53f9">
+        <source>Save draft label</source>
+        <target>Salvează eticheta de ciornă</target>
+      </trans-unit>
+      <trans-unit id="a3b211b3d48a8527">
+        <source>Schema version</source>
+        <target>Versiunea schemei</target>
+      </trans-unit>
+      <trans-unit id="1f1ee138dd7cc075">
+        <source>Select one shop to view or edit its provider-account shell.</source>
+        <target>Selectați un magazin pentru a vedea sau edita structura contului de furnizor.</target>
+      </trans-unit>
+      <trans-unit id="05c5932fa7e6f852">
+        <source>Shop #%id%</source>
+        <target>Magazin #%id%</target>
+      </trans-unit>
+      <trans-unit id="c0dca80fc8db0a1a">
+        <source>Shop group</source>
+        <target>Grup de magazine</target>
+      </trans-unit>
+      <trans-unit id="540f96bdbee0b0a2">
+        <source>Shop group #%id%</source>
+        <target>Grup de magazine #%id%</target>
+      </trans-unit>
+      <trans-unit id="57e7a4109f0841e6">
+        <source>Single shop</source>
+        <target>Un singur magazin</target>
+      </trans-unit>
+      <trans-unit id="d875f7d9427652c3">
+        <source>Standard</source>
+        <target>Standard</target>
+      </trans-unit>
+      <trans-unit id="b7dc9ef42f82f81f">
+        <source>Status</source>
+        <target>Stare</target>
+      </trans-unit>
+      <trans-unit id="93f83d9464343844">
+        <source>The Cargus draft account label was saved.</source>
+        <target>Eticheta contului Cargus în stare de ciornă a fost salvată.</target>
+      </trans-unit>
+      <trans-unit id="d0f129e8aee03f5d">
+        <source>This foundation is intentionally operationally inert.</source>
+        <target>Această fundație este intenționat inertă operațional.</target>
+      </trans-unit>
+      <trans-unit id="3d4d5ec51f0b065e">
+        <source>Uninstall QRK Shipping? Encrypted secrets will be deleted; non-secret foundation data will be retained.</source>
+        <target>Dezinstalați QRK Shipping? Secretele criptate vor fi șterse, iar datele nesensibile ale fundației vor fi păstrate.</target>
+      </trans-unit>
+      <trans-unit id="91d492e6d8189bf2">
+        <source>Unknown scope</source>
+        <target>Context necunoscut</target>
+      </trans-unit>
+      <trans-unit id="8a275619450ea2f6">
+        <source>group #%id%</source>
+        <target>grupul #%id%</target>
+      </trans-unit>
+      <trans-unit id="7fbdc55046b4f1d8">
+        <source>inherited</source>
+        <target>moștenit</target>
+      </trans-unit>
+      <trans-unit id="58916fa85382174f">
+        <source>shop #%id%</source>
+        <target>magazinul #%id%</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

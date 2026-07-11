@@ -1,0 +1,16 @@
+{% set typeLabels = {
+  all: 'All stores'|trans({}, 'Modules.Qrkshipping.Admin'),
+  shop_group: 'Shop group'|trans({}, 'Modules.Qrkshipping.Admin'),
+  shop: 'Single shop'|trans({}, 'Modules.Qrkshipping.Admin')
+} %}
+<div class="alert alert-info" role="status">
+  <strong>{{ 'Current context:'|trans({}, 'Modules.Qrkshipping.Admin') }}</strong>
+  {{ typeLabels[shopContext.type] ?? shopContext.type }}
+  {% if shopContext.shop_group_id > 0 %}
+    · {{ 'group #%id%'|trans({'%id%': shopContext.shop_group_id}, 'Modules.Qrkshipping.Admin') }}
+  {% endif %}
+  {% if shopContext.shop_id > 0 %}
+    · {{ 'shop #%id%'|trans({'%id%': shopContext.shop_id}, 'Modules.Qrkshipping.Admin') }}
+    {% if shopContext.shop_name %}— {{ shopContext.shop_name }}{% endif %}
+  {% endif %}
+</div>

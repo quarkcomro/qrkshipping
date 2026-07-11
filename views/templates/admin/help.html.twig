@@ -1,0 +1,61 @@
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+{% trans_default_domain 'Modules.Qrkshipping.Help' %}
+
+{% block content %}
+  {% include '@Modules/qrkshipping/views/templates/admin/_navigation.html.twig' %}
+  {% include '@Modules/qrkshipping/views/templates/admin/_shop_context.html.twig' %}
+
+  <section class="card mb-3">
+    <h2 class="card-header h3">{{ 'Quick start'|trans }}</h2>
+    <div class="card-body">
+      <ol>
+        <li>{{ 'Review Diagnostics and resolve every failed foundation check.'|trans }}</li>
+        <li>{{ 'Choose the all-stores, shop-group, or single-shop context before changing diagnostic preferences.'|trans }}</li>
+        <li>{{ 'Choose one shop to create the inert Cargus account shell.'|trans }}</li>
+      </ol>
+      <p class="mb-0">{{ 'There is no connection test or credential form in Increment 1.'|trans }}</p>
+    </div>
+  </section>
+
+  <div class="row">
+    <div class="col-lg-6">
+      <section class="card mb-3">
+        <h2 class="card-header h3">{{ 'Scope model'|trans }}</h2>
+        <div class="card-body">
+          <p>{{ 'Settings resolve from the most specific scope to the least specific scope.'|trans }}</p>
+          <p class="mb-0"><code>shop → shop group → all stores → catalog default</code></p>
+        </div>
+      </section>
+    </div>
+    <div class="col-lg-6">
+      <section class="card mb-3">
+        <h2 class="card-header h3">{{ 'Shipping concepts'|trans }}</h2>
+        <div class="card-body">
+          <dl class="mb-0">
+            <dt>{{ 'Provider account'|trans }}</dt>
+            <dd>{{ 'A shop-specific administrative identity for a courier provider.'|trans }}</dd>
+            <dt>{{ 'Service'|trans }}</dt>
+            <dd>{{ 'A commercial or operational product exposed by a provider.'|trans }}</dd>
+            <dt>{{ 'Carrier'|trans }}</dt>
+            <dd>{{ 'A PrestaShop checkout option. None is created in this increment.'|trans }}</dd>
+            <dt>{{ 'PUDO'|trans }}</dt>
+            <dd>{{ 'A pickup or drop-off point. PUDO support is not implemented yet.'|trans }}</dd>
+          </dl>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="card">
+    <h2 class="card-header h3">{{ 'Data retention on uninstall'|trans }}</h2>
+    <div class="card-body">
+      <p>
+        {{
+          'Encrypted secret rows are deleted. The non-secret schema, settings, provider-account shell, migration journal, and audit events are retained.'
+            |trans
+        }}
+      </p>
+      <p class="mb-0">{{ 'Reinstallation adopts retained data only when the schema fingerprint is exactly compatible; otherwise it fails closed.'|trans }}</p>
+    </div>
+  </section>
+{% endblock %}

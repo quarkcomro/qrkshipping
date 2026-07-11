@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="en-US" datatype="plaintext" original="Modules.Qrkshipping.Help">
+    <body>
+      <trans-unit id="8cac0d454692ce31">
+        <source>A PrestaShop checkout option. None is created in this increment.</source>
+        <target>A PrestaShop checkout option. None is created in this increment.</target>
+      </trans-unit>
+      <trans-unit id="ce6bf61e1f518a7e">
+        <source>A commercial or operational product exposed by a provider.</source>
+        <target>A commercial or operational product exposed by a provider.</target>
+      </trans-unit>
+      <trans-unit id="761f967f34890242">
+        <source>A pickup or drop-off point. PUDO support is not implemented yet.</source>
+        <target>A pickup or drop-off point. PUDO support is not implemented yet.</target>
+      </trans-unit>
+      <trans-unit id="bfcc8ca476425da7">
+        <source>A shop-specific administrative identity for a courier provider.</source>
+        <target>A shop-specific administrative identity for a courier provider.</target>
+      </trans-unit>
+      <trans-unit id="d3ac49d947243971">
+        <source>Carrier</source>
+        <target>Carrier</target>
+      </trans-unit>
+      <trans-unit id="354742319c2926ee">
+        <source>Choose one shop to create the inert Cargus account shell.</source>
+        <target>Choose one shop to create the inert Cargus account shell.</target>
+      </trans-unit>
+      <trans-unit id="2cea0cff83efbbae">
+        <source>Choose the all-stores, shop-group, or single-shop context before changing diagnostic preferences.</source>
+        <target>Choose the all-stores, shop-group, or single-shop context before changing diagnostic preferences.</target>
+      </trans-unit>
+      <trans-unit id="261fb511b7553e89">
+        <source>Data retention on uninstall</source>
+        <target>Data retention on uninstall</target>
+      </trans-unit>
+      <trans-unit id="2b1bd356e8dd202d">
+        <source>Encrypted secret rows are deleted. The non-secret schema, settings, provider-account shell, migration journal, and audit events are retained.</source>
+        <target>Encrypted secret rows are deleted. The non-secret schema, settings, provider-account shell, migration journal, and audit events are retained.</target>
+      </trans-unit>
+      <trans-unit id="5076ad2b6bb459cc">
+        <source>PUDO</source>
+        <target>PUDO</target>
+      </trans-unit>
+      <trans-unit id="938bde58b899d190">
+        <source>Provider account</source>
+        <target>Provider account</target>
+      </trans-unit>
+      <trans-unit id="452c54c59392ef52">
+        <source>Quick start</source>
+        <target>Quick start</target>
+      </trans-unit>
+      <trans-unit id="388ba6bae3580fee">
+        <source>Reinstallation adopts retained data only when the schema fingerprint is exactly compatible; otherwise it fails closed.</source>
+        <target>Reinstallation adopts retained data only when the schema fingerprint is exactly compatible; otherwise it fails closed.</target>
+      </trans-unit>
+      <trans-unit id="fc5f294b9217fc8c">
+        <source>Review Diagnostics and resolve every failed foundation check.</source>
+        <target>Review Diagnostics and resolve every failed foundation check.</target>
+      </trans-unit>
+      <trans-unit id="8a9ddef20c84dab6">
+        <source>Scope model</source>
+        <target>Scope model</target>
+      </trans-unit>
+      <trans-unit id="4ed161328eb4dfaa">
+        <source>Service</source>
+        <target>Service</target>
+      </trans-unit>
+      <trans-unit id="685ee13b0eb7c60f">
+        <source>Settings resolve from the most specific scope to the least specific scope.</source>
+        <target>Settings resolve from the most specific scope to the least specific scope.</target>
+      </trans-unit>
+      <trans-unit id="2fbca5b40bdcacaa">
+        <source>Shipping concepts</source>
+        <target>Shipping concepts</target>
+      </trans-unit>
+      <trans-unit id="c78ca9d8afef1f92">
+        <source>There is no connection test or credential form in Increment 1.</source>
+        <target>There is no connection test or credential form in Increment 1.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
