@@ -22,6 +22,7 @@ jobs:
       - name: Check out bootstrap tree
         uses: actions/checkout@v4
         with:
+          ref: agent/increment-1-foundation
           fetch-depth: 0
 
       - name: Configure minimum supported PHP and Composer
@@ -31,6 +32,47 @@ jobs:
           extensions: dom, json, mbstring, openssl, xml, zip
           tools: composer:v2
           coverage: none
+
+      - name: Capture transport diagnostics
+        shell: bash
+        run: |
+          set +e
+          mkdir -p /tmp/qrkshipping-source /tmp/qrkshipping-transport-diagnostics
+          report=/tmp/qrkshipping-transport-diagnostics/report.txt
+          {
+            echo 'expected_archive_sha256=0f0431c7806fbbbd293f157e57258548496f2c1869ceffaf001e1378daf76c0d'
+            echo 'chunk_count='$(find .github/publish-a0052b1 -maxdepth 1 -type f -name 'chunk*' | wc -l)
+            for file in .github/publish-a0052b1/chunk*; do
+              printf '%s bytes=' "$file"
+              wc -c < "$file"
+              printf '%s git_blob=' "$file"
+              git hash-object "$file"
+              sha256sum "$file"
+            done
+          } > "$report"
+          cat .github/publish-a0052b1/chunk* > /tmp/qrkshipping-source.tar.xz.b64
+          printf 'base64_bytes=' >> "$report"
+          wc -c < /tmp/qrkshipping-source.tar.xz.b64 >> "$report"
+          sha256sum /tmp/qrkshipping-source.tar.xz.b64 >> "$report"
+          base64 --decode /tmp/qrkshipping-source.tar.xz.b64 > /tmp/qrkshipping-source.tar.xz
+          echo 'base64_decode_status='$? >> "$report"
+          printf 'archive_bytes=' >> "$report"
+          wc -c < /tmp/qrkshipping-source.tar.xz >> "$report"
+          sha256sum /tmp/qrkshipping-source.tar.xz >> "$report"
+          xz --test /tmp/qrkshipping-source.tar.xz
+          echo 'xz_test_status='$? >> "$report"
+          tar -tJf /tmp/qrkshipping-source.tar.xz > /tmp/qrkshipping-transport-diagnostics/archive-files.txt
+          echo 'tar_list_status='$? >> "$report"
+          cat "$report"
+
+      - name: Upload transport diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: increment-1-transport-diagnostics
+          path: /tmp/qrkshipping-transport-diagnostics
+          if-no-files-found: error
+          retention-days: 3
 
       - name: Verify and decode the approved source tree
         run: |
