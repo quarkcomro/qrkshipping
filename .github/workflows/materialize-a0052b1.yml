@@ -6,6 +6,11 @@ on:
       - agent/increment-1-foundation
     paths:
       - .github/publish-a0052b1/READY
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/publish-a0052b1/READY
 
 permissions:
   contents: write
