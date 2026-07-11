@@ -8,10 +8,14 @@ use Qrk\Commerce\Shipping\Port\Persistence\DatabaseConnectionPort;
 
 final class SchemaInspector
 {
+    private readonly Utf8mb4CollationResolver $collationResolver;
+
     public function __construct(
         private readonly DatabaseConnectionPort $connection,
         private readonly string $databasePrefix,
+        ?Utf8mb4CollationResolver $collationResolver = null,
     ) {
+        $this->collationResolver = $collationResolver ?? new Utf8mb4CollationResolver($connection);
         if (preg_match('/^[A-Za-z0-9_]*$/D', $databasePrefix) !== 1) {
             throw new IncompatibleSchemaException('Database prefix contains unsupported characters.');
         }
@@ -38,12 +42,10 @@ final class SchemaInspector
 
     public function currentUtf8mb4Collation(): string
     {
-        $row = $this->connection->fetchOne('SELECT @@collation_database AS `collation`');
-        $collation = is_array($row) ? (string) ($row['collation'] ?? '') : '';
-
-        if (preg_match('/^utf8mb4_[A-Za-z0-9_]+$/D', $collation) !== 1) {
+        $collation = $this->collationResolver->resolve();
+        if ($collation === null) {
             throw new IncompatibleSchemaException(
-                'The current database collation is not a supported utf8mb4 collation.',
+                'The database server does not provide a supported utf8mb4 collation.',
             );
         }
 

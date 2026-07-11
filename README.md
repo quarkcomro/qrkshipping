@@ -16,7 +16,7 @@ The first increment is deliberately operationally inert:
 - PHP >= 8.2.32
 - Symfony 6.4 supplied by PrestaShop
 - MariaDB >= 10.6 or MySQL >= 8.0
-- InnoDB and `utf8mb4`
+- InnoDB support; QRK Shipping tables are created explicitly as `utf8mb4` (the database default may remain `utf8`/`utf8mb3`)
 
 ## Development
 
@@ -26,9 +26,7 @@ composer quality
 composer build
 ```
 
-`composer build` creates a reproducible module ZIP under `dist/` after installing
-production autoload files with Composer. Symfony and PrestaShop are never bundled
-by this module.
+`composer build` runs the local build script, which creates a reproducible module ZIP under `dist/` with a deterministic module-only PSR-4 autoloader. Symfony and PrestaShop are never bundled by this module.
 
 ## Validation status
 

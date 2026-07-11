@@ -54,7 +54,7 @@ final class QrkShipping extends CarrierModule
         $this->tabs = $this->buildTabs();
     }
 
-    public function install()
+    public function install(): bool
     {
         $failures = (new RuntimeRequirementsChecker(new PrestaShopDatabaseConnection()))->check();
         if ($failures !== []) {
@@ -95,7 +95,7 @@ final class QrkShipping extends CarrierModule
         return true;
     }
 
-    public function uninstall()
+    public function uninstall(): bool
     {
         try {
             FoundationFactory::uninstaller()->removeSecretsAndKeepData();
@@ -112,19 +112,19 @@ final class QrkShipping extends CarrierModule
         return parent::uninstall();
     }
 
-    public function getContent()
+    public function getContent(): string
     {
         Tools::redirectAdmin($this->context->link->getAdminLink(DashboardController::TAB_CLASS_NAME));
 
         return '';
     }
 
-    public function getOrderShippingCost($params, $shipping_cost)
+    public function getOrderShippingCost($params, $shipping_cost): false
     {
         return false;
     }
 
-    public function getOrderShippingCostExternal($params)
+    public function getOrderShippingCostExternal($params): false
     {
         return false;
     }
@@ -214,8 +214,7 @@ final class QrkShipping extends CarrierModule
             'mariadb_version' => 'MariaDB %current% is installed; QRK Shipping requires MariaDB %required% or newer.',
             'mysql_version' => 'MySQL %current% is installed; QRK Shipping requires MySQL %required% or newer.',
             'database_engine' => 'The database default engine is %current%; InnoDB is required.',
-            'database_charset' => 'The database charset is %current%; utf8mb4 is required.',
-            'database_collation' => 'The database collation %current% is not an utf8mb4 collation.',
+            'database_utf8mb4_unsupported' => 'The database server does not provide a supported utf8mb4 collation.',
             'database_version_unknown' => 'The database server version could not be identified safely.',
             default => 'The database runtime could not be verified safely.',
         };

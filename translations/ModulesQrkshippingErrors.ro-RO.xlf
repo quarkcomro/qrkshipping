@@ -34,13 +34,9 @@
         <source>The change could not be saved safely.</source>
         <target>Modificarea nu a putut fi salvată în siguranță.</target>
       </trans-unit>
-      <trans-unit id="b3522d211257f3e2">
-        <source>The database charset is %current%; utf8mb4 is required.</source>
-        <target>Setul de caractere al bazei de date este %current%; este obligatoriu utf8mb4.</target>
-      </trans-unit>
-      <trans-unit id="600d966868bd9bf1">
-        <source>The database collation %current% is not an utf8mb4 collation.</source>
-        <target>Colaționarea bazei de date %current% nu este o colaționare utf8mb4.</target>
+      <trans-unit id="8e6ef78089531aed">
+        <source>The database server does not provide a supported utf8mb4 collation.</source>
+        <target>Serverul bazei de date nu oferă o colaționare utf8mb4 acceptată.</target>
       </trans-unit>
       <trans-unit id="497c0c39a0ba5ee6">
         <source>The database default engine is %current%; InnoDB is required.</source>

@@ -18,6 +18,7 @@ use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaInstallationEx
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaInspector;
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaManager;
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaPlanner;
+use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\Utf8mb4CollationResolver;
 use Qrk\Commerce\Shipping\Infrastructure\Security\OpenSslAesGcmSecretCipher;
 use Qrk\Commerce\Shipping\Tests\Support\FailureInjectingDatabaseConnection;
 use Qrk\Commerce\Shipping\Tests\Support\FrozenClock;
@@ -26,6 +27,7 @@ use Qrk\Commerce\Shipping\Tests\Support\InMemorySecretRepository;
 use Qrk\Commerce\Shipping\Tests\Support\InMemorySettingRepository;
 use Qrk\Commerce\Shipping\Tests\Support\InMemoryTransactionManager;
 use Qrk\Commerce\Shipping\Tests\Support\MutableMasterKeyProvider;
+use Qrk\Commerce\Shipping\Tests\Support\QueuedDatabaseConnection;
 use Qrk\Commerce\Shipping\Tests\Support\ThrowingSchemaStepObserver;
 
 if (!function_exists('mb_strlen')) {
@@ -70,6 +72,22 @@ $assert(
 $assert(
     (string) DecimalAmount::fromString('-2.5')->add(DecimalAmount::fromString('3.75')) === '1.25',
     'Exact addition failed.',
+);
+
+$assert(
+    (new Utf8mb4CollationResolver(new QueuedDatabaseConnection([
+        ['collation' => 'utf8mb3_general_ci'],
+        ['collation' => 'utf8mb4_unicode_ci'],
+    ])))->resolve() === 'utf8mb4_unicode_ci',
+    'Legacy database default did not fall back to portable utf8mb4.',
+);
+$assert(
+    (new Utf8mb4CollationResolver(new QueuedDatabaseConnection([
+        ['collation' => 'utf8mb3_general_ci'],
+        null,
+        null,
+    ])))->resolve() === null,
+    'Missing portable utf8mb4 support did not fail closed.',
 );
 
 $clock = new FrozenClock(new DateTimeImmutable('2026-07-11T12:00:00+00:00', new DateTimeZone('UTC')));

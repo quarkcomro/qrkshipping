@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace Qrk\Commerce\Shipping\Adapter\PrestaShop\Install;
 
+use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\Utf8mb4CollationResolver;
 use Qrk\Commerce\Shipping\ModuleMetadata;
 use Qrk\Commerce\Shipping\Port\Persistence\DatabaseConnectionPort;
 use Throwable;
 
 final class RuntimeRequirementsChecker
 {
+    private readonly Utf8mb4CollationResolver $collationResolver;
+
     public function __construct(
         private readonly DatabaseConnectionPort $connection,
+        ?Utf8mb4CollationResolver $collationResolver = null,
     ) {
+        $this->collationResolver = $collationResolver ?? new Utf8mb4CollationResolver($connection);
     }
 
     /**
@@ -76,8 +81,7 @@ final class RuntimeRequirementsChecker
     {
         $row = $this->connection->fetchOne(
             'SELECT VERSION() AS `version`, @@version_comment AS `version_comment`, '
-            . '@@default_storage_engine AS `engine`, @@character_set_database AS `charset`, '
-            . '@@collation_database AS `collation`',
+            . '@@default_storage_engine AS `engine`',
         );
 
         if ($row === null) {
@@ -114,17 +118,8 @@ final class RuntimeRequirementsChecker
             ]);
         }
 
-        if (strtolower((string) ($row['charset'] ?? '')) !== 'utf8mb4') {
-            $failures[] = new RuntimeRequirementFailure('database_charset', [
-                'current' => (string) ($row['charset'] ?? 'unknown'),
-                'required' => 'utf8mb4',
-            ]);
-        }
-
-        if (!str_starts_with(strtolower((string) ($row['collation'] ?? '')), 'utf8mb4_')) {
-            $failures[] = new RuntimeRequirementFailure('database_collation', [
-                'current' => (string) ($row['collation'] ?? 'unknown'),
-            ]);
+        if ($this->collationResolver->resolve() === null) {
+            $failures[] = new RuntimeRequirementFailure('database_utf8mb4_unsupported');
         }
     }
 

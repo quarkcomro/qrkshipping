@@ -7,7 +7,7 @@ namespace Qrk\Commerce\Shipping;
 final class ModuleMetadata
 {
     public const NAME = 'qrkshipping';
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.1.1';
     public const MIN_PRESTASHOP_VERSION = '9.1.4';
     public const MAX_PRESTASHOP_VERSION_EXCLUSIVE = '10.0.0';
     public const MIN_PHP_VERSION_ID = 80232;

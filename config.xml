@@ -2,7 +2,7 @@
 <module>
   <name>qrkshipping</name>
   <displayName><![CDATA[QRK Shipping]]></displayName>
-  <version><![CDATA[0.1.0]]></version>
+  <version><![CDATA[0.1.1]]></version>
   <description><![CDATA[
     Provider-neutral shipping foundation. Cargus is the initial provider,
     but no live provider operations are enabled in this increment.

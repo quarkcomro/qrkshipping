@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1] - 2026-07-11
+
+### Fixed
+
+- Accept PrestaShop databases whose default charset/collation is legacy `utf8`/`utf8mb3` when the server supports portable `utf8mb4` collations.
+- Create and validate all QRK Shipping tables explicitly as InnoDB/utf8mb4 without altering the shop database defaults.
+- Add unit and real-database regression coverage for the reported clean-stage installation failure.
+
 ## [0.1.0] - 2026-07-11
 
 ### Added
