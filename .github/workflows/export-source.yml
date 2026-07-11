@@ -1,4 +1,4 @@
-name: Export branch source
+name: Export branch tree metadata
 
 on:
   push:
@@ -19,22 +19,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create source archive
-        run: git archive --format=zip --output=/tmp/qrkshipping-branch-source.zip HEAD
-
-      - name: Upload source archive
-        uses: actions/upload-artifact@v4
-        with:
-          name: qrkshipping-branch-source
-          path: /tmp/qrkshipping-branch-source.zip
-          if-no-files-found: error
-          retention-days: 1
-
-      - name: Publish run identifier
+      - name: Publish triggering commit and tree identifiers
         run: |
-          printf '%s\n' '${{ github.run_id }}' > .github/export/RUN_ID
+          printf 'commit=%s\ntree=%s\n' "$(git rev-parse HEAD)" "$(git rev-parse HEAD^{tree})" > .github/export/TREE_INFO
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/export/RUN_ID
-          git commit -m 'Record source export run identifier'
+          git add .github/export/TREE_INFO
+          git commit -m 'Record branch tree metadata'
           git push origin HEAD:agent/increment-1-foundation
