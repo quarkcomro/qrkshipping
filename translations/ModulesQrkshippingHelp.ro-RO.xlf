@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="ro-RO" datatype="plaintext" original="Modules.Qrkshipping.Help">
+    <body>
+      <trans-unit id="8cac0d454692ce31">
+        <source>A PrestaShop checkout option. None is created in this increment.</source>
+        <target>O opțiune de checkout PrestaShop. Niciuna nu este creată în acest increment.</target>
+      </trans-unit>
+      <trans-unit id="ce6bf61e1f518a7e">
+        <source>A commercial or operational product exposed by a provider.</source>
+        <target>Un produs comercial sau operațional expus de un furnizor.</target>
+      </trans-unit>
+      <trans-unit id="761f967f34890242">
+        <source>A pickup or drop-off point. PUDO support is not implemented yet.</source>
+        <target>Un punct de ridicare sau predare. Suportul PUDO nu este încă implementat.</target>
+      </trans-unit>
+      <trans-unit id="bfcc8ca476425da7">
+        <source>A shop-specific administrative identity for a courier provider.</source>
+        <target>O identitate administrativă specifică magazinului pentru un furnizor de curierat.</target>
+      </trans-unit>
+      <trans-unit id="d3ac49d947243971">
+        <source>Carrier</source>
+        <target>Transportator</target>
+      </trans-unit>
+      <trans-unit id="354742319c2926ee">
+        <source>Choose one shop to create the inert Cargus account shell.</source>
+        <target>Alegeți un magazin pentru a crea structura inertă a contului Cargus.</target>
+      </trans-unit>
+      <trans-unit id="2cea0cff83efbbae">
+        <source>Choose the all-stores, shop-group, or single-shop context before changing diagnostic preferences.</source>
+        <target>Alegeți contextul toate magazinele, grup de magazine sau un singur magazin înainte de a modifica preferințele de diagnosticare.</target>
+      </trans-unit>
+      <trans-unit id="261fb511b7553e89">
+        <source>Data retention on uninstall</source>
+        <target>Păstrarea datelor la dezinstalare</target>
+      </trans-unit>
+      <trans-unit id="2b1bd356e8dd202d">
+        <source>Encrypted secret rows are deleted. The non-secret schema, settings, provider-account shell, migration journal, and audit events are retained.</source>
+        <target>Rândurile cu secrete criptate sunt șterse. Schema nesensibilă, setările, structura contului de furnizor, jurnalul de migrare și evenimentele de audit sunt păstrate.</target>
+      </trans-unit>
+      <trans-unit id="5076ad2b6bb459cc">
+        <source>PUDO</source>
+        <target>PUDO</target>
+      </trans-unit>
+      <trans-unit id="938bde58b899d190">
+        <source>Provider account</source>
+        <target>Cont de furnizor</target>
+      </trans-unit>
+      <trans-unit id="452c54c59392ef52">
+        <source>Quick start</source>
+        <target>Pornire rapidă</target>
+      </trans-unit>
+      <trans-unit id="388ba6bae3580fee">
+        <source>Reinstallation adopts retained data only when the schema fingerprint is exactly compatible; otherwise it fails closed.</source>
+        <target>Reinstalarea adoptă datele păstrate numai dacă amprenta schemei este exact compatibilă; altfel eșuează închis.</target>
+      </trans-unit>
+      <trans-unit id="fc5f294b9217fc8c">
+        <source>Review Diagnostics and resolve every failed foundation check.</source>
+        <target>Verificați Diagnosticarea și remediați fiecare verificare eșuată a fundației.</target>
+      </trans-unit>
+      <trans-unit id="8a9ddef20c84dab6">
+        <source>Scope model</source>
+        <target>Modelul de context</target>
+      </trans-unit>
+      <trans-unit id="4ed161328eb4dfaa">
+        <source>Service</source>
+        <target>Serviciu</target>
+      </trans-unit>
+      <trans-unit id="685ee13b0eb7c60f">
+        <source>Settings resolve from the most specific scope to the least specific scope.</source>
+        <target>Setările se rezolvă de la contextul cel mai specific la cel mai puțin specific.</target>
+      </trans-unit>
+      <trans-unit id="2fbca5b40bdcacaa">
+        <source>Shipping concepts</source>
+        <target>Concepte de livrare</target>
+      </trans-unit>
+      <trans-unit id="c78ca9d8afef1f92">
+        <source>There is no connection test or credential form in Increment 1.</source>
+        <target>În Incrementul 1 nu există test de conexiune sau formular de credențiale.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <name>qrkshipping</name>
+  <displayName><![CDATA[QRK Shipping]]></displayName>
+  <version><![CDATA[0.1.0]]></version>
+  <description><![CDATA[
+    Provider-neutral shipping foundation. Cargus is the initial provider,
+    but no live provider operations are enabled in this increment.
+  ]]></description>
+  <author><![CDATA[QUARK]]></author>
+  <tab><![CDATA[shipping_logistics]]></tab>
+  <confirmUninstall><![CDATA[Uninstall QRK Shipping? Encrypted secrets will be deleted; non-secret foundation data will be retained.]]></confirmUninstall>
+  <is_configurable>1</is_configurable>
+  <need_instance>0</need_instance>
+  <limited_countries></limited_countries>
+  <ps_versions_compliancy>
+    <min>9.1.4</min>
+    <max>9.99.99</max>
+  </ps_versions_compliancy>
+</module>

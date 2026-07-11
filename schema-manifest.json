@@ -1,0 +1,548 @@
+{
+    "schema_version": "0001_foundation",
+    "fingerprint": "095104f966f4f204936c186fec66a578241e91da26e720861f554313eddd0723",
+    "migration_checksum": "db9e83bde33bf0cbae520670a8ba935b3aa47dc50c142f7d6b8a2fbe07d5cff4",
+    "database_engines": [
+        "MariaDB >= 10.6",
+        "MySQL >= 8.0"
+    ],
+    "storage_engine": "InnoDB",
+    "charset": "utf8mb4",
+    "uninstall_policy": {
+        "delete_secret_rows": true,
+        "retain_non_secret_tables": true,
+        "automatic_legacy_migration": false
+    },
+    "tables": [
+        {
+            "suffix": "qrkship_schema_migration",
+            "engine": "innodb",
+            "charset": "utf8mb4",
+            "columns": [
+                {
+                    "name": "id_schema_migration",
+                    "type": "bigint unsigned",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": true
+                },
+                {
+                    "name": "migration_version",
+                    "type": "varchar(32)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "migration_checksum",
+                    "type": "char(64)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "schema_fingerprint",
+                    "type": "char(64)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "status",
+                    "type": "varchar(16)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "error_code",
+                    "type": "varchar(64)",
+                    "nullable": true,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "applied_at",
+                    "type": "datetime",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "PRIMARY",
+                    "columns": [
+                        "id_schema_migration"
+                    ],
+                    "unique": true,
+                    "primary": true
+                },
+                {
+                    "name": "uniq_qrkship_migration_version",
+                    "columns": [
+                        "migration_version"
+                    ],
+                    "unique": true,
+                    "primary": false
+                }
+            ]
+        },
+        {
+            "suffix": "qrkship_setting",
+            "engine": "innodb",
+            "charset": "utf8mb4",
+            "columns": [
+                {
+                    "name": "id_setting",
+                    "type": "bigint unsigned",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": true
+                },
+                {
+                    "name": "setting_key",
+                    "type": "varchar(128)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "value_type",
+                    "type": "varchar(16)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "scope_type",
+                    "type": "varchar(16)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "id_shop_group",
+                    "type": "int unsigned",
+                    "nullable": false,
+                    "default": "0",
+                    "auto_increment": false
+                },
+                {
+                    "name": "id_shop",
+                    "type": "int unsigned",
+                    "nullable": false,
+                    "default": "0",
+                    "auto_increment": false
+                },
+                {
+                    "name": "value_text",
+                    "type": "longtext",
+                    "nullable": true,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "is_empty",
+                    "type": "tinyint(1)",
+                    "nullable": false,
+                    "default": "0",
+                    "auto_increment": false
+                },
+                {
+                    "name": "created_at",
+                    "type": "datetime",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "updated_at",
+                    "type": "datetime",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "PRIMARY",
+                    "columns": [
+                        "id_setting"
+                    ],
+                    "unique": true,
+                    "primary": true
+                },
+                {
+                    "name": "uniq_qrkship_setting_scope",
+                    "columns": [
+                        "setting_key",
+                        "scope_type",
+                        "id_shop_group",
+                        "id_shop"
+                    ],
+                    "unique": true,
+                    "primary": false
+                },
+                {
+                    "name": "idx_qrkship_setting_scope",
+                    "columns": [
+                        "scope_type",
+                        "id_shop_group",
+                        "id_shop"
+                    ],
+                    "unique": false,
+                    "primary": false
+                }
+            ]
+        },
+        {
+            "suffix": "qrkship_secret",
+            "engine": "innodb",
+            "charset": "utf8mb4",
+            "columns": [
+                {
+                    "name": "id_secret",
+                    "type": "bigint unsigned",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": true
+                },
+                {
+                    "name": "provider_account_id",
+                    "type": "bigint unsigned",
+                    "nullable": false,
+                    "default": "0",
+                    "auto_increment": false
+                },
+                {
+                    "name": "secret_key",
+                    "type": "varchar(128)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "scope_type",
+                    "type": "varchar(16)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "id_shop_group",
+                    "type": "int unsigned",
+                    "nullable": false,
+                    "default": "0",
+                    "auto_increment": false
+                },
+                {
+                    "name": "id_shop",
+                    "type": "int unsigned",
+                    "nullable": false,
+                    "default": "0",
+                    "auto_increment": false
+                },
+                {
+                    "name": "cipher_version",
+                    "type": "smallint unsigned",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "key_id",
+                    "type": "varchar(64)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "nonce_b64",
+                    "type": "varchar(64)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "ciphertext_b64",
+                    "type": "longtext",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "auth_tag_b64",
+                    "type": "varchar(64)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "created_at",
+                    "type": "datetime",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "updated_at",
+                    "type": "datetime",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "PRIMARY",
+                    "columns": [
+                        "id_secret"
+                    ],
+                    "unique": true,
+                    "primary": true
+                },
+                {
+                    "name": "uniq_qrkship_secret_locator",
+                    "columns": [
+                        "provider_account_id",
+                        "secret_key",
+                        "scope_type",
+                        "id_shop_group",
+                        "id_shop"
+                    ],
+                    "unique": true,
+                    "primary": false
+                },
+                {
+                    "name": "idx_qrkship_secret_account",
+                    "columns": [
+                        "provider_account_id",
+                        "id_shop"
+                    ],
+                    "unique": false,
+                    "primary": false
+                }
+            ]
+        },
+        {
+            "suffix": "qrkship_provider_account",
+            "engine": "innodb",
+            "charset": "utf8mb4",
+            "columns": [
+                {
+                    "name": "id_provider_account",
+                    "type": "bigint unsigned",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": true
+                },
+                {
+                    "name": "provider_code",
+                    "type": "varchar(64)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "id_shop",
+                    "type": "int unsigned",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "account_label",
+                    "type": "varchar(160)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "status",
+                    "type": "varchar(32)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "created_at",
+                    "type": "datetime",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "updated_at",
+                    "type": "datetime",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "PRIMARY",
+                    "columns": [
+                        "id_provider_account"
+                    ],
+                    "unique": true,
+                    "primary": true
+                },
+                {
+                    "name": "uniq_qrkship_provider_shop",
+                    "columns": [
+                        "provider_code",
+                        "id_shop"
+                    ],
+                    "unique": true,
+                    "primary": false
+                },
+                {
+                    "name": "idx_qrkship_provider_status",
+                    "columns": [
+                        "provider_code",
+                        "status"
+                    ],
+                    "unique": false,
+                    "primary": false
+                }
+            ]
+        },
+        {
+            "suffix": "qrkship_audit_event",
+            "engine": "innodb",
+            "charset": "utf8mb4",
+            "columns": [
+                {
+                    "name": "id_audit_event",
+                    "type": "bigint unsigned",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": true
+                },
+                {
+                    "name": "event_code",
+                    "type": "varchar(96)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "severity",
+                    "type": "varchar(16)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "scope_type",
+                    "type": "varchar(16)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "id_shop_group",
+                    "type": "int unsigned",
+                    "nullable": false,
+                    "default": "0",
+                    "auto_increment": false
+                },
+                {
+                    "name": "id_shop",
+                    "type": "int unsigned",
+                    "nullable": false,
+                    "default": "0",
+                    "auto_increment": false
+                },
+                {
+                    "name": "actor_type",
+                    "type": "varchar(32)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "actor_id",
+                    "type": "bigint unsigned",
+                    "nullable": false,
+                    "default": "0",
+                    "auto_increment": false
+                },
+                {
+                    "name": "subject_type",
+                    "type": "varchar(64)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "subject_id",
+                    "type": "varchar(128)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "correlation_id",
+                    "type": "varchar(64)",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "metadata_text",
+                    "type": "longtext",
+                    "nullable": true,
+                    "default": null,
+                    "auto_increment": false
+                },
+                {
+                    "name": "occurred_at",
+                    "type": "datetime",
+                    "nullable": false,
+                    "default": null,
+                    "auto_increment": false
+                }
+            ],
+            "indexes": [
+                {
+                    "name": "PRIMARY",
+                    "columns": [
+                        "id_audit_event"
+                    ],
+                    "unique": true,
+                    "primary": true
+                },
+                {
+                    "name": "idx_qrkship_audit_time",
+                    "columns": [
+                        "occurred_at",
+                        "id_audit_event"
+                    ],
+                    "unique": false,
+                    "primary": false
+                },
+                {
+                    "name": "idx_qrkship_audit_event",
+                    "columns": [
+                        "event_code",
+                        "occurred_at"
+                    ],
+                    "unique": false,
+                    "primary": false
+                },
+                {
+                    "name": "idx_qrkship_audit_subject",
+                    "columns": [
+                        "subject_type",
+                        "subject_id"
+                    ],
+                    "unique": false,
+                    "primary": false
+                }
+            ]
+        }
+    ]
+}

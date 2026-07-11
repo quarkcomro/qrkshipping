@@ -1,0 +1,29 @@
+name: Export branch tree metadata
+
+on:
+  push:
+    branches:
+      - agent/increment-1-foundation
+    paths:
+      - .github/export/READY
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Publish triggering commit and tree identifiers
+        run: |
+          printf 'commit=%s\ntree=%s\n' "$(git rev-parse HEAD)" "$(git rev-parse HEAD^{tree})" > .github/export/TREE_INFO
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/export/TREE_INFO
+          git commit -m 'Record branch tree metadata'
+          git push origin HEAD:agent/increment-1-foundation

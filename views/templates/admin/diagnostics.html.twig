@@ -1,0 +1,69 @@
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+{% trans_default_domain 'Modules.Qrkshipping.Diagnostics' %}
+
+{% block content %}
+  {% include '@Modules/qrkshipping/views/templates/admin/_navigation.html.twig' %}
+  {% include '@Modules/qrkshipping/views/templates/admin/_shop_context.html.twig' %}
+
+  <div class="alert {{ report.healthy ? 'alert-success' : 'alert-danger' }}" role="status">
+    {% if report.healthy %}
+      {{ 'All executed foundation checks passed.'|trans }}
+    {% else %}
+      {{ 'At least one executed foundation check failed.'|trans }}
+    {% endif %}
+    {{ 'This page performs no database writes and no provider HTTP requests.'|trans }}
+  </div>
+
+  {% if not detailLevelReadable %}
+    <div class="alert alert-warning" role="alert">
+      {{ 'The diagnostic display preference could not be read; standard detail is shown.'|trans }}
+    </div>
+  {% endif %}
+
+  <section class="card">
+    <h2 class="card-header h3">{{ 'Read-only checks'|trans }}</h2>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'Check'|trans }}</th>
+              <th scope="col">{{ 'Status'|trans }}</th>
+              {% if detailLevel == 'detailed' %}<th scope="col">{{ 'Details'|trans }}</th>{% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for check in report.checks %}
+              <tr>
+                <td><code>{{ check.code }}</code></td>
+                <td>
+                  {% if check.status.value == 'pass' %}
+                    <span class="badge badge-success">{{ 'pass'|trans }}</span>
+                  {% elseif check.status.value == 'warning' %}
+                    <span class="badge badge-warning">{{ 'warning'|trans }}</span>
+                  {% else %}
+                    <span class="badge badge-danger">{{ 'fail'|trans }}</span>
+                  {% endif %}
+                </td>
+                {% if detailLevel == 'detailed' %}
+                  <td>
+                    {% if check.details is empty %}
+                      <span class="text-muted">—</span>
+                    {% else %}
+                      <dl class="mb-0">
+                        {% for key, value in check.details %}
+                          <dt><code>{{ key }}</code></dt>
+                          <dd>{{ value is same as(true) ? 'true' : (value is same as(false) ? 'false' : value) }}</dd>
+                        {% endfor %}
+                      </dl>
+                    {% endif %}
+                  </td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+{% endblock %}

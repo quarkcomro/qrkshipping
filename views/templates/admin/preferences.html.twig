@@ -1,0 +1,88 @@
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+{% trans_default_domain 'Modules.Qrkshipping.Admin' %}
+
+{% block content %}
+  {% include '@Modules/qrkshipping/views/templates/admin/_navigation.html.twig' %}
+  {% include '@Modules/qrkshipping/views/templates/admin/_shop_context.html.twig' %}
+
+  <div class="row">
+    <div class="col-xl-7">
+      <section class="card mb-3">
+        <h2 class="card-header h3">{{ 'Diagnostic preferences'|trans }}</h2>
+        <div class="card-body">
+          {% if not diagnosticsPreferenceReadable %}
+            <div class="alert alert-danger mb-0">
+              {{ 'The diagnostic preference could not be read safely. Editing is disabled.'|trans({}, 'Modules.Qrkshipping.Errors') }}
+            </div>
+          {% else %}
+            <p>
+              {{ 'Effective source:'|trans }} <strong>{{ diagnosticsSource }}</strong>
+              {% if diagnosticsInherited %}<span class="badge badge-info">{{ 'inherited'|trans }}</span>{% endif %}
+            </p>
+            <form method="post" action="{{ path('admin_qrkshipping_preferences_update') }}">
+              <input type="hidden" name="_token" value="{{ csrfToken }}">
+              <input type="hidden" name="action" value="save_diagnostics">
+              <div class="form-group">
+                <label for="diagnostics_detail_level">{{ 'Detail level'|trans }}</label>
+                <select class="form-control" id="diagnostics_detail_level" name="diagnostics_detail_level">
+                  <option value="standard" {% if diagnosticsDetailLevel == 'standard' %}selected{% endif %}>{{ 'Standard'|trans }}</option>
+                  <option value="detailed" {% if diagnosticsDetailLevel == 'detailed' %}selected{% endif %}>{{ 'Detailed'|trans }}</option>
+                </select>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="1" id="inherit" name="inherit">
+                <label class="form-check-label" for="inherit">
+                  {{ 'Remove the override at this context and use inheritance.'|trans }}
+                </label>
+              </div>
+              <button class="btn btn-primary" type="submit">{{ 'Save diagnostic preference'|trans }}</button>
+            </form>
+          {% endif %}
+        </div>
+      </section>
+    </div>
+
+    <div class="col-xl-5">
+      <section class="card mb-3">
+        <h2 class="card-header h3">{{ 'Cargus provider-account shell'|trans }}</h2>
+        <div class="card-body">
+          {% if not providerAccountReadable %}
+            <div class="alert alert-danger">{{ 'The provider-account state could not be read safely.'|trans({}, 'Modules.Qrkshipping.Errors') }}</div>
+          {% elseif shopContext.type != 'shop' %}
+            <div class="alert alert-warning">
+              {{ 'Provider accounts are isolated per shop. Select one shop before editing.'|trans }}
+            </div>
+          {% else %}
+            <p>{{ 'Only an internal draft label is stored in this increment. No credentials or live connection are accepted.'|trans }}</p>
+            <form method="post" action="{{ path('admin_qrkshipping_preferences_update') }}">
+              <input type="hidden" name="_token" value="{{ csrfToken }}">
+              <input type="hidden" name="action" value="save_provider_account">
+              <div class="form-group">
+                <label for="provider_account_label">{{ 'Internal label'|trans }}</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="provider_account_label"
+                  name="provider_account_label"
+                  value="{{ providerAccount ? providerAccount.label : 'Cargus' }}"
+                  maxlength="160"
+                  required
+                >
+              </div>
+              <button class="btn btn-primary" type="submit">{{ 'Save draft label'|trans }}</button>
+            </form>
+            {% if providerAccount %}
+              <p class="mt-3 mb-0">
+                {{ 'Current status:'|trans }} <span class="badge badge-secondary">{{ providerAccount.status.value }}</span>
+              </p>
+            {% endif %}
+          {% endif %}
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="alert alert-info mb-0">
+    {{ 'Inheritance order: shop override, then shop-group override, then all-stores value, then catalog default.'|trans }}
+  </div>
+{% endblock %}

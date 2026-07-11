@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="en-US" datatype="plaintext" original="Modules.Qrkshipping.Diagnostics">
+    <body>
+      <trans-unit id="abe3fb2db7b4403d">
+        <source>All executed foundation checks passed.</source>
+        <target>All executed foundation checks passed.</target>
+      </trans-unit>
+      <trans-unit id="75c69156d2382101">
+        <source>At least one executed foundation check failed.</source>
+        <target>At least one executed foundation check failed.</target>
+      </trans-unit>
+      <trans-unit id="98226140d4c03b9d">
+        <source>Check</source>
+        <target>Check</target>
+      </trans-unit>
+      <trans-unit id="eab231b6d04d2223">
+        <source>Details</source>
+        <target>Details</target>
+      </trans-unit>
+      <trans-unit id="6db2ede3eb644b9f">
+        <source>Read-only checks</source>
+        <target>Read-only checks</target>
+      </trans-unit>
+      <trans-unit id="32eb177e089d9edc">
+        <source>Status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="fe16ad4a07e0c2d7">
+        <source>This page performs no database writes and no provider HTTP requests.</source>
+        <target>This page performs no database writes and no provider HTTP requests.</target>
+      </trans-unit>
+      <trans-unit id="6a3bb6fba0556898">
+        <source>fail</source>
+        <target>fail</target>
+      </trans-unit>
+      <trans-unit id="d555fa56ef13da00">
+        <source>pass</source>
+        <target>pass</target>
+      </trans-unit>
+      <trans-unit id="f8cd725af03a2cfe">
+        <source>warning</source>
+        <target>warning</target>
+      </trans-unit>
+      <trans-unit id="33372240c3296920">
+        <source>The diagnostic display preference could not be read; standard detail is shown.</source>
+        <target>The diagnostic display preference could not be read; standard detail is shown.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

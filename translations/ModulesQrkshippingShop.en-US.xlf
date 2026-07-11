@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="en-US" datatype="plaintext" original="Modules.Qrkshipping.Shop">
+    <body>
+      <trans-unit id="8a5e65a435ed362e">
+        <source>QRK Shipping is not active in checkout in this increment.</source>
+        <target>QRK Shipping is not active in checkout in this increment.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

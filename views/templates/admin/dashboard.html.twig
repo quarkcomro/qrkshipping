@@ -1,0 +1,73 @@
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+{% trans_default_domain 'Modules.Qrkshipping.Admin' %}
+
+{% block content %}
+  {% include '@Modules/qrkshipping/views/templates/admin/_navigation.html.twig' %}
+  {% include '@Modules/qrkshipping/views/templates/admin/_shop_context.html.twig' %}
+
+  <div class="row">
+    <div class="col-lg-6">
+      <section class="card mb-3">
+        <h2 class="card-header h3">{{ 'Foundation status'|trans }}</h2>
+        <div class="card-body">
+          <dl class="row mb-0">
+            <dt class="col-sm-5">{{ 'Module version'|trans }}</dt>
+            <dd class="col-sm-7"><code>{{ moduleVersion }}</code></dd>
+            <dt class="col-sm-5">{{ 'Schema version'|trans }}</dt>
+            <dd class="col-sm-7"><code>{{ schemaVersion }}</code></dd>
+            <dt class="col-sm-5">{{ 'Diagnostics'|trans }}</dt>
+            <dd class="col-sm-7">
+              {% if diagnosticsHealthy %}
+                <span class="badge badge-success">{{ 'Healthy'|trans }}</span>
+              {% else %}
+                <span class="badge badge-danger">{{ 'Attention required'|trans }}</span>
+              {% endif %}
+            </dd>
+          </dl>
+          <p class="mt-3 mb-0">
+            <a href="{{ path('admin_qrkshipping_diagnostics') }}">{{ 'Open read-only diagnostics'|trans }}</a>
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <div class="col-lg-6">
+      <section class="card mb-3">
+        <h2 class="card-header h3">{{ 'Initial provider'|trans }}</h2>
+        <div class="card-body">
+          <p><strong>Cargus</strong></p>
+          {% if not providerAccountReadable %}
+            <div class="alert alert-danger">{{ 'The provider-account state could not be read safely.'|trans({}, 'Modules.Qrkshipping.Errors') }}</div>
+          {% elseif shopContext.type != 'shop' %}
+            <p>{{ 'Select one shop to view or edit its provider-account shell.'|trans }}</p>
+          {% elseif providerAccount %}
+            <dl class="row mb-0">
+              <dt class="col-sm-5">{{ 'Internal label'|trans }}</dt>
+              <dd class="col-sm-7">{{ providerAccount.label }}</dd>
+              <dt class="col-sm-5">{{ 'Status'|trans }}</dt>
+              <dd class="col-sm-7"><span class="badge badge-secondary">{{ providerAccount.status.value }}</span></dd>
+            </dl>
+          {% else %}
+            <p>{{ 'No draft provider account exists for this shop.'|trans }}</p>
+          {% endif %}
+          <p class="mt-3 mb-0">
+            <a href="{{ path('admin_qrkshipping_preferences') }}">{{ 'Open preferences'|trans }}</a>
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="card">
+    <h2 class="card-header h3">{{ 'Increment 1 boundaries'|trans }}</h2>
+    <div class="card-body">
+      <p>{{ 'This foundation is intentionally operationally inert.'|trans }}</p>
+      <ul class="mb-0">
+        <li>{{ 'No carrier is created or activated.'|trans }}</li>
+        <li>{{ 'No provider HTTP request is made.'|trans }}</li>
+        <li>{{ 'Checkout cost methods return unavailable without database writes.'|trans }}</li>
+        <li>{{ 'No AWB, label, tracking, PUDO, synchronization, parcelization, or commercial pricing is implemented.'|trans }}</li>
+      </ul>
+    </div>
+  </section>
+{% endblock %}

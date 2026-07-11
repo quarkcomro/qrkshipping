@@ -1,0 +1,147 @@
+parameters:
+  qrkshipping.module_directory: '%kernel.project_dir%/modules/qrkshipping'
+
+services:
+  _defaults:
+    public: false
+    autowire: false
+    autoconfigure: false
+
+  Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection: ~
+  Qrk\Commerce\Shipping\Port\Persistence\DatabaseConnectionPort:
+    alias: Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection
+
+  Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopTransactionManager:
+    arguments:
+      $connection: '@Qrk\Commerce\Shipping\Port\Persistence\DatabaseConnectionPort'
+  Qrk\Commerce\Shipping\Port\Persistence\TransactionManagerPort:
+    alias: Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopTransactionManager
+
+  Qrk\Commerce\Shipping\Infrastructure\Clock\SystemClock: ~
+  Qrk\Commerce\Shipping\Port\Clock\ClockPort:
+    alias: Qrk\Commerce\Shipping\Infrastructure\Clock\SystemClock
+
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\ScopePersistenceMapper: ~
+
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaCatalog: ~
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaPlanner: ~
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\NullSchemaStepObserver: ~
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaInspector:
+    arguments:
+      $connection: '@Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection'
+      $databasePrefix: '%database_prefix%'
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\MigrationRecorder:
+    arguments:
+      $connection: '@Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection'
+      $databasePrefix: '%database_prefix%'
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaManager:
+    arguments:
+      $connection: '@Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection'
+      $catalog: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaCatalog'
+      $inspector: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaInspector'
+      $planner: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaPlanner'
+      $migrationRecorder: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\MigrationRecorder'
+      $clock: '@Qrk\Commerce\Shipping\Port\Clock\ClockPort'
+      $databasePrefix: '%database_prefix%'
+      $stepObserver: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\NullSchemaStepObserver'
+
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\DbAuditEventRepository:
+    arguments:
+      $connection: '@Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection'
+      $scopeMapper: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\ScopePersistenceMapper'
+      $databasePrefix: '%database_prefix%'
+  Qrk\Commerce\Shipping\Port\Persistence\AuditEventRepositoryPort:
+    alias: Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\DbAuditEventRepository
+
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\DbSettingRepository:
+    arguments:
+      $connection: '@Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection'
+      $scopeMapper: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\ScopePersistenceMapper'
+      $clock: '@Qrk\Commerce\Shipping\Port\Clock\ClockPort'
+      $databasePrefix: '%database_prefix%'
+  Qrk\Commerce\Shipping\Port\Persistence\SettingRepositoryPort:
+    alias: Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\DbSettingRepository
+
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\DbSecretRepository:
+    arguments:
+      $connection: '@Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection'
+      $scopeMapper: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\ScopePersistenceMapper'
+      $clock: '@Qrk\Commerce\Shipping\Port\Clock\ClockPort'
+      $databasePrefix: '%database_prefix%'
+  Qrk\Commerce\Shipping\Port\Persistence\SecretRepositoryPort:
+    alias: Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\DbSecretRepository
+
+  Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\DbProviderAccountRepository:
+    arguments:
+      $connection: '@Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection'
+      $clock: '@Qrk\Commerce\Shipping\Port\Clock\ClockPort'
+      $databasePrefix: '%database_prefix%'
+  Qrk\Commerce\Shipping\Port\Persistence\ProviderAccountRepositoryPort:
+    alias: Qrk\Commerce\Shipping\Infrastructure\Persistence\Repository\DbProviderAccountRepository
+
+  Qrk\Commerce\Shipping\Application\Settings\SettingsCatalog: ~
+  Qrk\Commerce\Shipping\Application\Settings\SettingValueCodec: ~
+  Qrk\Commerce\Shipping\Application\Settings\SettingsService:
+    arguments:
+      $catalog: '@Qrk\Commerce\Shipping\Application\Settings\SettingsCatalog'
+      $codec: '@Qrk\Commerce\Shipping\Application\Settings\SettingValueCodec'
+      $repository: '@Qrk\Commerce\Shipping\Port\Persistence\SettingRepositoryPort'
+      $auditEvents: '@Qrk\Commerce\Shipping\Port\Persistence\AuditEventRepositoryPort'
+      $transactions: '@Qrk\Commerce\Shipping\Port\Persistence\TransactionManagerPort'
+      $clock: '@Qrk\Commerce\Shipping\Port\Clock\ClockPort'
+
+  Qrk\Commerce\Shipping\Application\Provider\ProviderAccountService:
+    arguments:
+      $repository: '@Qrk\Commerce\Shipping\Port\Persistence\ProviderAccountRepositoryPort'
+      $auditEvents: '@Qrk\Commerce\Shipping\Port\Persistence\AuditEventRepositoryPort'
+      $transactions: '@Qrk\Commerce\Shipping\Port\Persistence\TransactionManagerPort'
+      $clock: '@Qrk\Commerce\Shipping\Port\Clock\ClockPort'
+
+  Qrk\Commerce\Shipping\Adapter\PrestaShop\Security\PrestaShopMasterKeyProvider: ~
+  Qrk\Commerce\Shipping\Port\Security\MasterKeyProviderPort:
+    alias: Qrk\Commerce\Shipping\Adapter\PrestaShop\Security\PrestaShopMasterKeyProvider
+  Qrk\Commerce\Shipping\Infrastructure\Security\OpenSslAesGcmSecretCipher: ~
+  Qrk\Commerce\Shipping\Port\Security\SecretCipherPort:
+    alias: Qrk\Commerce\Shipping\Infrastructure\Security\OpenSslAesGcmSecretCipher
+  Qrk\Commerce\Shipping\Application\Security\SecretStoreService:
+    arguments:
+      $repository: '@Qrk\Commerce\Shipping\Port\Persistence\SecretRepositoryPort'
+      $keyProvider: '@Qrk\Commerce\Shipping\Port\Security\MasterKeyProviderPort'
+      $cipher: '@Qrk\Commerce\Shipping\Port\Security\SecretCipherPort'
+      $auditEvents: '@Qrk\Commerce\Shipping\Port\Persistence\AuditEventRepositoryPort'
+      $transactions: '@Qrk\Commerce\Shipping\Port\Persistence\TransactionManagerPort'
+      $clock: '@Qrk\Commerce\Shipping\Port\Clock\ClockPort'
+
+  Qrk\Commerce\Shipping\Adapter\PrestaShop\Install\RuntimeRequirementsChecker:
+    arguments:
+      $connection: '@Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection'
+
+  Qrk\Commerce\Shipping\Adapter\PrestaShop\Multistore\ShopContextResolver:
+    autowire: true
+
+  Qrk\Commerce\Shipping\Adapter\PrestaShop\Diagnostics\FoundationDiagnosticsService:
+    arguments:
+      $runtimeRequirements: '@Qrk\Commerce\Shipping\Adapter\PrestaShop\Install\RuntimeRequirementsChecker'
+      $schemaCatalog: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaCatalog'
+      $schemaInspector: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaInspector'
+      $migrationRecorder: '@Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\MigrationRecorder'
+      $masterKeyProvider: '@Qrk\Commerce\Shipping\Port\Security\MasterKeyProviderPort'
+      $secretCipher: '@Qrk\Commerce\Shipping\Port\Security\SecretCipherPort'
+      $moduleDirectory: '%qrkshipping.module_directory%'
+
+  Qrk\Commerce\Shipping\Controller\Admin\DashboardController:
+    autowire: true
+    autoconfigure: true
+    public: true
+  Qrk\Commerce\Shipping\Controller\Admin\PreferencesController:
+    autowire: true
+    autoconfigure: true
+    public: true
+  Qrk\Commerce\Shipping\Controller\Admin\HelpController:
+    autowire: true
+    autoconfigure: true
+    public: true
+  Qrk\Commerce\Shipping\Controller\Admin\DiagnosticsController:
+    autowire: true
+    autoconfigure: true
+    public: true
