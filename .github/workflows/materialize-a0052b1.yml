@@ -1,0 +1,53 @@
+name: Materialize approved Increment 1 source
+
+on:
+  push:
+    branches:
+      - agent/increment-1-foundation
+    paths:
+      - .github/publish-a0052b1/READY
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out bootstrap tree
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure minimum supported PHP and Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2.32'
+          extensions: dom, json, mbstring, openssl, xml, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Decode the approved source tree
+        run: |
+          mkdir -p /tmp/qrkshipping-source
+          cat .github/publish-a0052b1/chunk* \
+            | base64 --decode \
+            | tar -xJf - -C /tmp/qrkshipping-source
+
+      - name: Replace bootstrap files with the approved source
+        run: |
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a /tmp/qrkshipping-source/. .
+
+      - name: Resolve the reproducible development lock at the minimum PHP baseline
+        run: |
+          composer update --no-install --prefer-dist --no-interaction --no-progress
+          composer validate --strict --no-check-publish
+
+      - name: Commit the materialized Increment 1 tree
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Materialize Increment 1 foundation (a0052b1)'
+          git push origin HEAD:agent/increment-1-foundation
