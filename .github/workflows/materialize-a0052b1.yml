@@ -27,25 +27,30 @@ jobs:
           tools: composer:v2
           coverage: none
 
-      - name: Decode the approved source tree
+      - name: Verify and decode the approved source tree
         run: |
+          set -euo pipefail
           mkdir -p /tmp/qrkshipping-source
-          cat .github/publish-a0052b1/chunk* \
-            | base64 --decode \
-            | tar -xJf - -C /tmp/qrkshipping-source
+          cat .github/publish-a0052b1/chunk* > /tmp/qrkshipping-source.tar.xz.b64
+          base64 --decode /tmp/qrkshipping-source.tar.xz.b64 > /tmp/qrkshipping-source.tar.xz
+          echo '0f0431c7806fbbbd293f157e57258548496f2c1869ceffaf001e1378daf76c0d  /tmp/qrkshipping-source.tar.xz' | sha256sum --check --strict
+          tar -xJf /tmp/qrkshipping-source.tar.xz -C /tmp/qrkshipping-source
 
       - name: Replace bootstrap files with the approved source
         run: |
+          set -euo pipefail
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -a /tmp/qrkshipping-source/. .
 
       - name: Resolve the reproducible development lock at the minimum PHP baseline
         run: |
+          set -euo pipefail
           composer update --no-install --prefer-dist --no-interaction --no-progress
           composer validate --strict --no-check-publish
 
       - name: Commit the materialized Increment 1 tree
         run: |
+          set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
