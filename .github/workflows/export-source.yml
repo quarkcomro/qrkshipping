@@ -14,17 +14,27 @@ jobs:
   export:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out branch
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Create source archive
+        run: git archive --format=zip --output=/tmp/qrkshipping-branch-source.zip HEAD
+
+      - name: Upload source archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: qrkshipping-branch-source
+          path: /tmp/qrkshipping-branch-source.zip
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Publish run identifier
         run: |
-          mkdir -p .github/export
-          git archive --format=zip --output=.github/export/source.zip HEAD
-      - name: Commit source archive
-        run: |
+          printf '%s\n' '${{ github.run_id }}' > .github/export/RUN_ID
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/export/source.zip
-          git commit -m 'Export branch source for validation'
+          git add .github/export/RUN_ID
+          git commit -m 'Record source export run identifier'
           git push origin HEAD:agent/increment-1-foundation
