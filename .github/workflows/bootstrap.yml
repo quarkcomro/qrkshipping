@@ -19,12 +19,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Decode approved source payload
+      - name: Verify and decode approved source payload
         run: |
+          cat .github/bootstrap/chunk* | base64 --decode > /tmp/qrkshipping-source.tar.xz
+          echo '5c04f8222b6a7225048ca025ddf0b26f78e540a63358e8de6ba1e868e76bc582  /tmp/qrkshipping-source.tar.xz' \
+            | sha256sum --check --strict
           mkdir -p /tmp/qrkshipping-source
-          cat .github/bootstrap/chunk* \
-            | base64 --decode \
-            | tar -xJf - -C /tmp/qrkshipping-source
+          tar -xJf /tmp/qrkshipping-source.tar.xz -C /tmp/qrkshipping-source
 
       - name: Replace bootstrap tree with approved source
         run: |
