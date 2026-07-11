@@ -6,17 +6,22 @@ on:
       - agent/increment-1-foundation
     paths:
       - .github/bootstrap/READY
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
 
 jobs:
   materialize:
+    if: github.head_ref == 'agent/increment-1-foundation' || github.ref_name == 'agent/increment-1-foundation'
     runs-on: ubuntu-24.04
     steps:
-      - name: Check out bootstrap commit
+      - name: Check out bootstrap branch
         uses: actions/checkout@v4
         with:
+          ref: agent/increment-1-foundation
           fetch-depth: 0
 
       - name: Verify and decode approved source payload
