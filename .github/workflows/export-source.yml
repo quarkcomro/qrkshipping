@@ -1,0 +1,27 @@
+name: Export branch source
+
+on:
+  push:
+    branches:
+      - agent/increment-1-foundation
+    paths:
+      - .github/export/READY
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create source archive
+        run: |
+          git archive --format=zip --output=qrkshipping-branch-source.zip HEAD
+      - name: Upload source archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: qrkshipping-branch-source
+          path: qrkshipping-branch-source.zip
+          if-no-files-found: error
+          retention-days: 1
