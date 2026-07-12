@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+use Qrk\Commerce\Shipping\Adapter\PrestaShop\Install\FoundationUninstaller;
+use Qrk\Commerce\Shipping\Adapter\PrestaShop\Lifecycle\LifecycleOperationDetector;
+use Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection;
+use Qrk\Commerce\Shipping\Application\Lifecycle\LifecycleOperation;
+use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicy;
+use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicyService;
 use Qrk\Commerce\Shipping\Application\Security\SecretStoreService;
 use Qrk\Commerce\Shipping\Application\Settings\SettingValueCodec;
 use Qrk\Commerce\Shipping\Application\Settings\SettingsCatalog;
@@ -27,8 +33,65 @@ use Qrk\Commerce\Shipping\Tests\Support\InMemorySecretRepository;
 use Qrk\Commerce\Shipping\Tests\Support\InMemorySettingRepository;
 use Qrk\Commerce\Shipping\Tests\Support\InMemoryTransactionManager;
 use Qrk\Commerce\Shipping\Tests\Support\MutableMasterKeyProvider;
+use Qrk\Commerce\Shipping\Port\Persistence\DatabaseConnectionPort;
 use Qrk\Commerce\Shipping\Tests\Support\QueuedDatabaseConnection;
 use Qrk\Commerce\Shipping\Tests\Support\ThrowingSchemaStepObserver;
+
+if (!class_exists('Db')) {
+    class Db
+    {
+        private static ?self $instance = null;
+
+        /** @var list<array{sql: string, array: bool, use_cache: bool}> */
+        public array $executeSCalls = [];
+
+        /** @var list<array<string, mixed>>|false */
+        public array|false $executeSResult = [];
+
+        public static function getInstance(bool $useMaster = true): self
+        {
+            return self::$instance ??= new self();
+        }
+
+        public static function setInstanceForTesting(self $instance): void
+        {
+            self::$instance = $instance;
+        }
+
+        public function execute(string $sql): bool
+        {
+            return true;
+        }
+
+        /** @return list<array<string, mixed>>|false */
+        public function executeS(string $sql, bool $array = true, bool $useCache = true): array|false
+        {
+            $this->executeSCalls[] = ['sql' => $sql, 'array' => $array, 'use_cache' => $useCache];
+
+            return $this->executeSResult;
+        }
+
+        public function escape(string $value, bool $htmlOk = false, bool $bqSql = false): string
+        {
+            return str_replace("'", "''", $value);
+        }
+
+        public function Insert_ID(): int
+        {
+            return 0;
+        }
+
+        public function Affected_Rows(): int
+        {
+            return 0;
+        }
+
+        public function getMsgError(): string
+        {
+            return '';
+        }
+    }
+}
 
 if (!function_exists('mb_strlen')) {
     function mb_strlen(string $value, ?string $encoding = null): int
@@ -63,6 +126,20 @@ $assert = static function (bool $condition, string $message) use (&$checks): voi
         throw new RuntimeException($message);
     }
 };
+
+$databaseProbe = new Db();
+$databaseProbe->executeSResult = [['value' => 'fresh']];
+Db::setInstanceForTesting($databaseProbe);
+$databaseRows = (new PrestaShopDatabaseConnection())->fetchAll('SELECT authoritative metadata');
+$assert($databaseRows === [['value' => 'fresh']], 'Authoritative database read returned unexpected data.');
+$assert(
+    $databaseProbe->executeSCalls === [[
+        'sql' => 'SELECT authoritative metadata',
+        'array' => true,
+        'use_cache' => false,
+    ]],
+    'Authoritative database read did not bypass the PrestaShop SQL result cache.',
+);
 
 $assert((string) DecimalAmount::fromString('001.230000') === '1.23', 'Decimal normalization failed.');
 $assert(
@@ -116,6 +193,106 @@ $settings->removeOverride(SettingsCatalog::DIAGNOSTICS_DETAIL_LEVEL, $shop, Audi
 $assert(
     $settings->resolve(SettingsCatalog::DIAGNOSTICS_DETAIL_LEVEL, $shop)->value() === 'detailed',
     'Override removal failed.',
+);
+
+$uninstallOnlyPolicy = new LifecyclePolicy(true, false);
+$assert(
+    $uninstallOnlyPolicy->purgeFor(LifecycleOperation::UNINSTALL),
+    'Uninstall-specific destructive policy was not selected.',
+);
+$assert(
+    !$uninstallOnlyPolicy->purgeFor(LifecycleOperation::RESET),
+    'Reset incorrectly consumed the uninstall destructive policy.',
+);
+
+$lifecycle = new LifecyclePolicyService($settings);
+$assert(!$lifecycle->current()->purgeOnUninstall(), 'Lifecycle uninstall default is destructive.');
+$assert(!$lifecycle->current()->resetToDefaults(), 'Lifecycle reset default is destructive.');
+$lifecycle->save(true, true, AuditActor::employee(1));
+$assert($lifecycle->current()->purgeOnUninstall(), 'Lifecycle uninstall policy was not saved.');
+$assert($lifecycle->current()->resetToDefaults(), 'Lifecycle reset policy was not saved.');
+
+if (!defined('_PS_VERSION_')) {
+    define('_PS_VERSION_', '9.1.4');
+}
+require_once $root . '/upgrade/upgrade-0.1.2.php';
+$upgradeProbe = new class {
+    /** @var list<string> */
+    public array $hooks = [];
+
+    public function registerHook(string $hookName): bool
+    {
+        $this->hooks[] = $hookName;
+
+        return true;
+    }
+};
+$assert(upgrade_module_0_1_2($upgradeProbe), 'The 0.1.2 upgrade entrypoint failed.');
+$assert($upgradeProbe->hooks === ['actionBeforeResetModule'], 'The reset lifecycle hook was not upgraded.');
+
+$consoleResetDetector = new LifecycleOperationDetector(null, [
+    'bin/console',
+    'prestashop:module',
+    'reset',
+    'qrkshipping',
+    '--env=prod',
+]);
+$assert($consoleResetDetector->isResetFor('qrkshipping'), 'The official console reset was not detected.');
+$assert(!$consoleResetDetector->isResetFor('anothermodule'), 'A reset for another module was misclassified.');
+
+$purgeConnection = new class implements DatabaseConnectionPort {
+    /** @var list<string> */
+    public array $executed = [];
+    private int $metadataReads = 0;
+
+    public function execute(string $sql): void
+    {
+        $this->executed[] = $sql;
+    }
+
+    public function fetchOne(string $sql): ?array
+    {
+        return null;
+    }
+
+    public function fetchAll(string $sql): array
+    {
+        ++$this->metadataReads;
+
+        return $this->metadataReads === 1
+            ? [['TABLE_NAME' => 'smoke_qrkship_future_extension']]
+            : [];
+    }
+
+    public function quote(string $value): string
+    {
+        return "'" . str_replace("'", "''", $value) . "'";
+    }
+
+    public function lastInsertId(): int
+    {
+        return 0;
+    }
+
+    public function affectedRows(): int
+    {
+        return 0;
+    }
+};
+$purgeCatalog = new SchemaCatalog();
+$purgeUninstaller = new FoundationUninstaller(
+    $purgeConnection,
+    new InMemorySecretRepository(),
+    new InMemoryAuditEventRepository(),
+    $clock,
+    $purgeCatalog,
+    'smoke_',
+);
+$assert($purgeUninstaller->purgeAllData() === 0, 'Namespace purge returned an unexpected secret count.');
+$assert(count($purgeConnection->executed) === 1, 'Namespace purge did not use one atomic DROP statement.');
+$assert(
+    str_contains($purgeConnection->executed[0], '`smoke_qrkship_future_extension`'),
+    'Namespace purge omitted a future QRK Shipping table.',
 );
 
 $secrets = new InMemorySecretRepository();

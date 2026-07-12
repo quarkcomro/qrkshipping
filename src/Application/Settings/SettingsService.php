@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Qrk\Commerce\Shipping\Application\Settings;
 
+use InvalidArgumentException;
 use Qrk\Commerce\Shipping\Domain\Audit\AuditActor;
 use Qrk\Commerce\Shipping\Domain\Audit\AuditEvent;
 use Qrk\Commerce\Shipping\Domain\Settings\ResolvedSetting;
+use Qrk\Commerce\Shipping\Domain\Settings\SettingDefinition;
 use Qrk\Commerce\Shipping\Domain\Settings\SettingScope;
 use Qrk\Commerce\Shipping\Domain\Settings\StoredSetting;
 use Qrk\Commerce\Shipping\Port\Clock\ClockPort;
 use Qrk\Commerce\Shipping\Port\Persistence\AuditEventRepositoryPort;
 use Qrk\Commerce\Shipping\Port\Persistence\SettingRepositoryPort;
 use Qrk\Commerce\Shipping\Port\Persistence\TransactionManagerPort;
+use UnexpectedValueException;
 
 final class SettingsService
 {
@@ -48,7 +51,7 @@ final class SettingsService
                 || $stored->type() !== $definition->type()
                 || !$stored->scope()->equals($scope)
             ) {
-                throw new \UnexpectedValueException(sprintf(
+                throw new UnexpectedValueException(sprintf(
                     'Stored identity for setting "%s" does not match its requested catalog scope.',
                     $key,
                 ));
@@ -99,6 +102,61 @@ final class SettingsService
                 ],
                 $this->clock->now(),
             ));
+        });
+
+        $this->cache = [];
+    }
+
+    /**
+     * Persist several settings atomically at one scope.
+     *
+     * @param array<string, mixed> $values
+     */
+    public function setMany(array $values, SettingScope $scope, AuditActor $actor): void
+    {
+        if ($values === []) {
+            throw new InvalidArgumentException('At least one setting value is required.');
+        }
+
+        /** @var array<string, array{definition: SettingDefinition, encoded: EncodedSettingValue}> $prepared */
+        $prepared = [];
+        foreach ($values as $key => $value) {
+            $definition = $this->catalog->get($key);
+            $prepared[$key] = [
+                'definition' => $definition,
+                'encoded' => $this->codec->encode($definition, $value),
+            ];
+        }
+
+        $correlationId = self::correlationId();
+        $this->transactions->run(function () use ($prepared, $scope, $actor, $correlationId): void {
+            foreach ($prepared as $key => $item) {
+                $definition = $item['definition'];
+                $encoded = $item['encoded'];
+                $this->repository->save(new StoredSetting(
+                    $key,
+                    $definition->type(),
+                    $scope,
+                    $encoded->value(),
+                    $encoded->isExplicitEmpty(),
+                ));
+
+                $this->auditEvents->append(new AuditEvent(
+                    'setting.updated',
+                    'info',
+                    $scope,
+                    $actor,
+                    'setting',
+                    $key,
+                    $correlationId,
+                    [
+                        'setting_key' => $key,
+                        'scope' => $scope->cacheKey(),
+                        'explicit_empty' => $encoded->isExplicitEmpty(),
+                    ],
+                    $this->clock->now(),
+                ));
+            }
         });
 
         $this->cache = [];

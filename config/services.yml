@@ -90,6 +90,10 @@ services:
       $transactions: '@Qrk\Commerce\Shipping\Port\Persistence\TransactionManagerPort'
       $clock: '@Qrk\Commerce\Shipping\Port\Clock\ClockPort'
 
+  Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicyService:
+    arguments:
+      $settings: '@Qrk\Commerce\Shipping\Application\Settings\SettingsService'
+
   Qrk\Commerce\Shipping\Application\Provider\ProviderAccountService:
     arguments:
       $repository: '@Qrk\Commerce\Shipping\Port\Persistence\ProviderAccountRepositoryPort'

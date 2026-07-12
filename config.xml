@@ -2,14 +2,14 @@
 <module>
   <name>qrkshipping</name>
   <displayName><![CDATA[QRK Shipping]]></displayName>
-  <version><![CDATA[0.1.1]]></version>
+  <version><![CDATA[0.1.2]]></version>
   <description><![CDATA[
     Provider-neutral shipping foundation. Cargus is the initial provider,
     but no live provider operations are enabled in this increment.
   ]]></description>
   <author><![CDATA[QUARK]]></author>
   <tab><![CDATA[shipping_logistics]]></tab>
-  <confirmUninstall><![CDATA[Uninstall QRK Shipping? Encrypted secrets will be deleted; non-secret foundation data will be retained.]]></confirmUninstall>
+  <confirmUninstall><![CDATA[Uninstall QRK Shipping? Encrypted secrets are always deleted. Depending on the global lifecycle policy, all QRK Shipping tables and data may also be permanently deleted.]]></confirmUninstall>
   <is_configurable>1</is_configurable>
   <need_instance>0</need_instance>
   <limited_countries></limited_countries>

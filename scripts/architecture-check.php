@@ -59,7 +59,9 @@ foreach (phpFiles($root . '/src/Controller') as $file) {
 
 $entrypoint = (string) file_get_contents($root . '/qrkshipping.php');
 foreach (['getOrderShippingCost', 'getOrderShippingCostExternal'] as $method) {
-    $pattern = '/public function ' . preg_quote($method, '/') . '\\([^)]*\\)\\s*\\{\\s*return false;\\s*\\}/s';
+    $pattern = '/public function '
+        . preg_quote($method, '/')
+        . '\\([^)]*\\)(?:\\s*:\\s*false)?\\s*\\{\\s*return false;\\s*\\}/s';
     if (preg_match($pattern, $entrypoint) !== 1) {
         $errors[] = $method . ': cost method is not the approved inert implementation';
     }

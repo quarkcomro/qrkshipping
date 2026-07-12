@@ -31,7 +31,7 @@ final class PrestaShopDatabaseConnection implements DatabaseConnectionPort
      */
     public function fetchAll(string $sql): array
     {
-        $rows = \Db::getInstance()->executeS($sql);
+        $rows = \Db::getInstance()->executeS($sql, true, false);
         if ($rows === false) {
             throw new DatabaseOperationException($this->safeError('Database query failed.'));
         }

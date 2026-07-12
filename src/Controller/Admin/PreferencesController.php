@@ -8,10 +8,13 @@ use InvalidArgumentException;
 use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use PrestaShopBundle\Security\Attribute\DemoRestricted;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Multistore\ShopContextResolver;
+use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicy;
+use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicyService;
 use Qrk\Commerce\Shipping\Application\Provider\ProviderAccountService;
 use Qrk\Commerce\Shipping\Application\Settings\SettingsCatalog;
 use Qrk\Commerce\Shipping\Application\Settings\SettingsService;
 use Qrk\Commerce\Shipping\Domain\Provider\ProviderCode;
+use Qrk\Commerce\Shipping\Domain\Settings\SettingScopeType;
 use Qrk\Commerce\Shipping\ModuleMetadata;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +31,7 @@ final class PreferencesController extends AbstractQrkShippingController
     public function __construct(
         private readonly ShopContextResolver $shopContextResolver,
         private readonly SettingsService $settings,
+        private readonly LifecyclePolicyService $lifecyclePolicy,
         private readonly ProviderAccountService $providerAccounts,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
@@ -54,6 +58,14 @@ final class PreferencesController extends AbstractQrkShippingController
             $diagnosticsPreferenceReadable = false;
         }
 
+        $policy = LifecyclePolicy::defaults();
+        $lifecyclePolicyReadable = true;
+        try {
+            $policy = $this->lifecyclePolicy->current();
+        } catch (Throwable) {
+            $lifecyclePolicyReadable = false;
+        }
+
         $account = null;
         $accountReadable = true;
 
@@ -75,6 +87,9 @@ final class PreferencesController extends AbstractQrkShippingController
             'diagnosticsSource' => $diagnosticsSource,
             'diagnosticsInherited' => $diagnosticsInherited,
             'diagnosticsPreferenceReadable' => $diagnosticsPreferenceReadable,
+            'lifecyclePolicyReadable' => $lifecyclePolicyReadable,
+            'purgeOnUninstall' => $policy->purgeOnUninstall(),
+            'resetToDefaults' => $policy->resetToDefaults(),
             'providerAccount' => $account,
             'providerAccountReadable' => $accountReadable,
             'csrfToken' => $this->csrfTokenManager->getToken(self::CSRF_TOKEN_ID)->getValue(),
@@ -118,6 +133,28 @@ final class PreferencesController extends AbstractQrkShippingController
                 }
 
                 $this->addFlash('success', $this->trans('Diagnostic preferences were saved.', [], self::ADMIN_DOMAIN));
+            } elseif ($action === 'save_lifecycle_policy') {
+                if ($context->scope()->type() !== SettingScopeType::ALL) {
+                    $this->addFlash('error', $this->trans(
+                        'Lifecycle policy can be changed only in the All stores context.',
+                        [],
+                        self::ERROR_DOMAIN,
+                    ));
+
+                    return $this->redirectToRoute('admin_qrkshipping_preferences');
+                }
+
+                $this->lifecyclePolicy->save(
+                    $request->request->getString('purge_on_uninstall') === '1',
+                    $request->request->getString('reset_to_defaults') === '1',
+                    $this->auditActor(),
+                );
+
+                $this->addFlash('success', $this->trans(
+                    'The global lifecycle policy was saved.',
+                    [],
+                    self::ADMIN_DOMAIN,
+                ));
             } elseif ($action === 'save_provider_account') {
                 if (!$context->isSingleShop()) {
                     throw new InvalidArgumentException('Provider account editing requires a single-shop context.');

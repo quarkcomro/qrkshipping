@@ -78,6 +78,30 @@
         <source>The diagnostic preference could not be read safely. Editing is disabled.</source>
         <target>Preferința pentru diagnostic nu a putut fi citită în siguranță. Editarea este dezactivată.</target>
       </trans-unit>
+      <trans-unit id="875e63933ffe0ae4">
+        <source>The global lifecycle policy could not be read safely. Editing is disabled.</source>
+        <target>Politica globală a ciclului de viață nu a putut fi citită în siguranță. Editarea este dezactivată.</target>
+      </trans-unit>
+      <trans-unit id="8d9ac9480feea9e5">
+        <source>Lifecycle policy can be changed only in the All stores context.</source>
+        <target>Politica ciclului de viață poate fi modificată numai în contextul Toate magazinele.</target>
+      </trans-unit>
+      <trans-unit id="935caf3d3b73879f">
+        <source>Uninstall was stopped because the global lifecycle policy could not be read safely.</source>
+        <target>Dezinstalarea a fost oprită deoarece politica globală a ciclului de viață nu a putut fi citită în siguranță.</target>
+      </trans-unit>
+      <trans-unit id="592a0cf90677472a">
+        <source>Reset was stopped because the global lifecycle policy could not be read safely.</source>
+        <target>Resetarea a fost oprită deoarece politica globală a ciclului de viață nu a putut fi citită în siguranță.</target>
+      </trans-unit>
+      <trans-unit id="c79f9dc9d3fd058e">
+        <source>The lifecycle operation was stopped because QRK Shipping data could not be processed safely.</source>
+        <target>Operațiunea ciclului de viață a fost oprită deoarece datele QRK Shipping nu au putut fi procesate în siguranță.</target>
+      </trans-unit>
+      <trans-unit id="c80ed035f5d7bccf">
+        <source>The QRK Shipping reset lifecycle hook could not be registered.</source>
+        <target>Hook-ul ciclului de viață pentru resetarea QRK Shipping nu a putut fi înregistrat.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

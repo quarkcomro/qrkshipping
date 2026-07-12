@@ -11,6 +11,7 @@ $finder = Finder::create()
     ->in([
         __DIR__ . '/src',
         __DIR__ . '/tests',
+        __DIR__ . '/upgrade',
         __DIR__ . '/scripts',
     ])
     ->append([__DIR__ . '/qrkshipping.php']);

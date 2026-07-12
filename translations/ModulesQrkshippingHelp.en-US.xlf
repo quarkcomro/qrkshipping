@@ -30,14 +30,6 @@
         <source>Choose the all-stores, shop-group, or single-shop context before changing diagnostic preferences.</source>
         <target>Choose the all-stores, shop-group, or single-shop context before changing diagnostic preferences.</target>
       </trans-unit>
-      <trans-unit id="261fb511b7553e89">
-        <source>Data retention on uninstall</source>
-        <target>Data retention on uninstall</target>
-      </trans-unit>
-      <trans-unit id="2b1bd356e8dd202d">
-        <source>Encrypted secret rows are deleted. The non-secret schema, settings, provider-account shell, migration journal, and audit events are retained.</source>
-        <target>Encrypted secret rows are deleted. The non-secret schema, settings, provider-account shell, migration journal, and audit events are retained.</target>
-      </trans-unit>
       <trans-unit id="5076ad2b6bb459cc">
         <source>PUDO</source>
         <target>PUDO</target>
@@ -77,6 +69,26 @@
       <trans-unit id="c78ca9d8afef1f92">
         <source>There is no connection test or credential form in Increment 1.</source>
         <target>There is no connection test or credential form in Increment 1.</target>
+      </trans-unit>
+      <trans-unit id="10772f002dbd7875">
+        <source>Lifecycle data policy</source>
+        <target>Lifecycle data policy</target>
+      </trans-unit>
+      <trans-unit id="2fc762085df1799c">
+        <source>Encrypted secrets are always deleted during uninstall and reset.</source>
+        <target>Encrypted secrets are always deleted during uninstall and reset.</target>
+      </trans-unit>
+      <trans-unit id="6e8094bc5be29a67">
+        <source>By default, uninstall retains the five foundation tables and all non-secret data. A global preference can instead delete every QRK Shipping table and row.</source>
+        <target>By default, uninstall retains the five foundation tables and all non-secret data. A global preference can instead delete every QRK Shipping table and row.</target>
+      </trans-unit>
+      <trans-unit id="23481384d45f5601">
+        <source>By default, Reset retains non-secret data. A global preference can instead recreate the foundation with catalog defaults.</source>
+        <target>By default, Reset retains non-secret data. A global preference can instead recreate the foundation with catalog defaults.</target>
+      </trans-unit>
+      <trans-unit id="77b24e997ee1595c">
+        <source>Lifecycle preferences are editable only in the All stores context.</source>
+        <target>Lifecycle preferences are editable only in the All stores context.</target>
       </trans-unit>
     </body>
   </file>

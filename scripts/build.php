@@ -86,39 +86,16 @@ foreach ([
 ] as $file) {
     $copyFile($root . '/' . $file, $moduleRoot . '/' . $file);
 }
-foreach (['config', 'src', 'views', 'translations'] as $directory) {
+foreach (['config', 'src', 'upgrade', 'views', 'translations'] as $directory) {
     $copyTree($root . '/' . $directory, $moduleRoot . '/' . $directory);
 }
 
-$composer = getenv('COMPOSER_BINARY') ?: 'composer';
-$command = [
-    $composer,
-    'dump-autoload',
-    '--no-dev',
-    '--classmap-authoritative',
-    '--no-interaction',
-    '--working-dir=' . $moduleRoot,
-];
-$process = proc_open($command, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
-if (is_resource($process)) {
-    $stdout = stream_get_contents($pipes[1]);
-    $stderr = stream_get_contents($pipes[2]);
-    fclose($pipes[1]);
-    fclose($pipes[2]);
-    $status = proc_close($process);
-} else {
-    $stdout = '';
-    $stderr = 'Composer process could not be started.';
-    $status = 127;
+$vendorDirectory = $moduleRoot . '/vendor';
+if (!is_dir($vendorDirectory) && !mkdir($vendorDirectory, 0775, true) && !is_dir($vendorDirectory)) {
+    throw new RuntimeException('Cannot create release vendor directory.');
 }
 
-if ($status !== 0) {
-    $vendorDirectory = $moduleRoot . '/vendor';
-    if (!is_dir($vendorDirectory) && !mkdir($vendorDirectory, 0775, true) && !is_dir($vendorDirectory)) {
-        throw new RuntimeException('Cannot create release vendor directory.');
-    }
-
-    file_put_contents($vendorDirectory . '/autoload.php', <<<'PHP'
+file_put_contents($vendorDirectory . '/autoload.php', <<<'PHP'
 <?php
 
 declare(strict_types=1);
@@ -135,7 +112,6 @@ spl_autoload_register(static function (string $class): void {
     }
 });
 PHP);
-}
 
 $scan = proc_open(
     [PHP_BINARY, $root . '/scripts/artifact-scan.php', $moduleRoot, '--release'],
@@ -220,6 +196,7 @@ file_put_contents($distRoot . '/BUILD_REPORT.json', json_encode([
     'sha256' => $checksum,
     'file_count' => count($zipFiles),
     'source_date_epoch' => $epoch,
+    'autoload' => 'deterministic_minimal_psr4',
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n");
 
 fwrite(STDOUT, $scanOutput);

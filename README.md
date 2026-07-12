@@ -18,6 +18,22 @@ The first increment is deliberately operationally inert:
 - MariaDB >= 10.6 or MySQL >= 8.0
 - InnoDB support; QRK Shipping tables are created explicitly as `utf8mb4` (the database default may remain `utf8`/`utf8mb3`)
 
+## Lifecycle data policy
+
+Lifecycle options are global and can be edited only in the **All stores** context under **QRK Shipping > Preferences**.
+
+The defaults are non-destructive:
+
+- uninstall deletes encrypted secret rows but retains the five foundation tables and non-secret data;
+- Reset deletes encrypted secret rows but retains non-secret data and adopts the compatible schema again.
+
+Two explicit options can change that behavior:
+
+- **Delete all QRK Shipping tables and data on uninstall** removes every table in the module-owned `<database-prefix>qrkship_` namespace;
+- **Reset all QRK Shipping data to catalog defaults on module reset** removes all module data, recreates the foundation schema and restores catalog defaults.
+
+The selected destructive option is consumed before its settings table is removed. After a destructive Reset or a later reinstall, both options return to their default disabled state.
+
 ## Development
 
 ```bash

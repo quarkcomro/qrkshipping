@@ -29,13 +29,24 @@ final class TemplateAccessibilityTest extends TestCase
     {
         $preferences = $this->template('preferences.html.twig');
 
-        foreach (['diagnostics_detail_level', 'inherit', 'provider_account_label'] as $controlId) {
+        $controlIds = [
+            'diagnostics_detail_level',
+            'inherit',
+            'provider_account_label',
+            'purge_on_uninstall',
+            'reset_to_defaults',
+        ];
+        foreach ($controlIds as $controlId) {
             self::assertStringContainsString('id="' . $controlId . '"', $preferences);
             self::assertStringContainsString('for="' . $controlId . '"', $preferences);
         }
 
-        self::assertSame(2, substr_count($preferences, '<form method="post"'));
-        self::assertSame(2, substr_count($preferences, 'name="_token"'));
+        self::assertSame(3, substr_count($preferences, '<form method="post"'));
+        self::assertSame(3, substr_count($preferences, 'name="_token"'));
+        self::assertStringContainsString('aria-describedby="purge_on_uninstall_help"', $preferences);
+        self::assertStringContainsString('id="purge_on_uninstall_help"', $preferences);
+        self::assertStringContainsString('aria-describedby="reset_to_defaults_help"', $preferences);
+        self::assertStringContainsString('id="reset_to_defaults_help"', $preferences);
         self::assertStringContainsString('maxlength="160"', $preferences);
         self::assertStringContainsString('required', $preferences);
     }
@@ -58,7 +69,8 @@ final class TemplateAccessibilityTest extends TestCase
 
         self::assertStringContainsString('There is no connection test or credential form', $help);
         self::assertStringContainsString('None is created in this increment.', $help);
-        self::assertStringContainsString('Encrypted secret rows are deleted.', $help);
+        self::assertStringContainsString('Encrypted secrets are always deleted during uninstall and reset.', $help);
+        self::assertStringContainsString('Lifecycle preferences are editable only in the All stores context.', $help);
         self::assertStringContainsString('fails closed', $help);
     }
 

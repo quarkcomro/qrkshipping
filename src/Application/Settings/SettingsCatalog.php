@@ -11,6 +11,8 @@ use Qrk\Commerce\Shipping\Domain\Settings\SettingType;
 final class SettingsCatalog
 {
     public const DIAGNOSTICS_DETAIL_LEVEL = 'diagnostics.detail_level';
+    public const LIFECYCLE_PURGE_ON_UNINSTALL = 'lifecycle.purge_on_uninstall';
+    public const LIFECYCLE_RESET_TO_DEFAULTS = 'lifecycle.reset_to_defaults';
 
     /** @var array<string, SettingDefinition> */
     private array $definitions;
@@ -27,6 +29,16 @@ final class SettingsCatalog
                 'standard',
                 false,
                 ['standard', 'detailed'],
+            ),
+            new SettingDefinition(
+                self::LIFECYCLE_PURGE_ON_UNINSTALL,
+                SettingType::BOOLEAN,
+                '0',
+            ),
+            new SettingDefinition(
+                self::LIFECYCLE_RESET_TO_DEFAULTS,
+                SettingType::BOOLEAN,
+                '0',
             ),
         ];
 

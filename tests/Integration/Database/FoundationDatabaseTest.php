@@ -89,7 +89,7 @@ final class FoundationDatabaseTest extends TestCase
             return;
         }
 
-        foreach (array_reverse($this->expectedTableNames()) as $tableName) {
+        foreach (array_reverse($this->qrkshipNamespaceTableNames()) as $tableName) {
             $this->connection->execute(sprintf('DROP TABLE IF EXISTS `%s`', $tableName));
         }
     }
@@ -188,6 +188,7 @@ final class FoundationDatabaseTest extends TestCase
             $secretRepository,
             new DbAuditEventRepository($this->connection, $this->scopeMapper, $this->prefix),
             $this->clock,
+            $this->catalog,
             $this->prefix,
         );
 
@@ -196,6 +197,44 @@ final class FoundationDatabaseTest extends TestCase
         self::assertSame($this->expectedTableNames(), $this->existingTableNames());
         self::assertGreaterThanOrEqual(1, $this->rowCount('qrkship_audit_event'));
         self::assertSame(SchemaInstallAction::ADOPT_EXISTING, $this->schemaManager()->install());
+    }
+
+    public function testPurgeUninstallDeletesEveryTableInTheQrkshipNamespace(): void
+    {
+        $this->schemaManager()->install();
+        $this->connection->execute(sprintf(
+            'CREATE TABLE `%sqrkship_future_extension` (`id` INT NOT NULL PRIMARY KEY) '
+            . 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
+            $this->prefix,
+        ));
+        $secretRepository = new DbSecretRepository(
+            $this->connection,
+            $this->scopeMapper,
+            $this->clock,
+            $this->prefix,
+        );
+        $locator = new SecretLocator(1, SettingScope::shop(1, 1), 'api_token');
+        $secretRepository->save($locator, new EncryptedSecret(
+            1,
+            'test-key',
+            base64_encode(random_bytes(12)),
+            base64_encode(random_bytes(32)),
+            base64_encode(random_bytes(16)),
+        ));
+
+        $uninstaller = new FoundationUninstaller(
+            $this->connection,
+            $secretRepository,
+            new DbAuditEventRepository($this->connection, $this->scopeMapper, $this->prefix),
+            $this->clock,
+            $this->catalog,
+            $this->prefix,
+        );
+
+        self::assertSame(1, $uninstaller->purgeAllData());
+        self::assertSame([], $this->qrkshipNamespaceTableNames());
+        self::assertSame(SchemaInstallAction::CREATE, $this->schemaManager()->install());
+        self::assertSame($this->expectedTableNames(), $this->existingTableNames());
     }
 
     public function testSettingsInheritanceAndAuditAreAtomicOnRealDatabase(): void
@@ -274,6 +313,46 @@ final class FoundationDatabaseTest extends TestCase
         }
     }
 
+    public function testLifecyclePolicyMutationRollsBackAtomicallyWhenSecondAuditFails(): void
+    {
+        $this->schemaManager()->install();
+        $auditRepository = new class implements AuditEventRepositoryPort {
+            private int $calls = 0;
+
+            public function append(AuditEvent $event): void
+            {
+                ++$this->calls;
+                if ($this->calls === 2) {
+                    throw new RuntimeException('Injected second audit failure.');
+                }
+            }
+        };
+        $settings = new SettingsService(
+            new SettingsCatalog(),
+            new SettingValueCodec(),
+            new DbSettingRepository($this->connection, $this->scopeMapper, $this->clock, $this->prefix),
+            $auditRepository,
+            new PrestaShopTransactionManager($this->connection),
+            $this->clock,
+        );
+
+        try {
+            $settings->setMany(
+                [
+                    SettingsCatalog::LIFECYCLE_PURGE_ON_UNINSTALL => true,
+                    SettingsCatalog::LIFECYCLE_RESET_TO_DEFAULTS => true,
+                ],
+                SettingScope::all(),
+                AuditActor::system(),
+            );
+            self::fail('Second audit failure did not abort the lifecycle-policy mutation.');
+        } catch (TransactionOperationException $exception) {
+            self::assertFalse($exception->rollbackFailed());
+            self::assertSame(0, $this->rowCount('qrkship_setting'));
+            self::assertSame(0, $this->rowCount('qrkship_audit_event'));
+        }
+    }
+
     public function testStrictSqlModeAndNonstandardPrefixAreActive(): void
     {
         $modeRow = $this->connection->fetchOne('SELECT @@SESSION.sql_mode AS `mode`');
@@ -330,6 +409,26 @@ final class FoundationDatabaseTest extends TestCase
             . 'WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` IN (' . $quotedNames . ') '
             . 'ORDER BY `TABLE_NAME` ASC',
         );
+
+        return array_map(
+            static fn (array $row): string => (string) ($row['TABLE_NAME'] ?? ''),
+            $rows,
+        );
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function qrkshipNamespaceTableNames(): array
+    {
+        $namespacePrefix = $this->prefix . 'qrkship_';
+        $rows = $this->connection->fetchAll(sprintf(
+            'SELECT `TABLE_NAME` FROM `INFORMATION_SCHEMA`.`TABLES` '
+            . 'WHERE `TABLE_SCHEMA` = DATABASE() AND LEFT(`TABLE_NAME`, %d) = %s '
+            . 'ORDER BY `TABLE_NAME` ASC',
+            strlen($namespacePrefix),
+            $this->connection->quote($namespacePrefix),
+        ));
 
         return array_map(
             static fn (array $row): string => (string) ($row['TABLE_NAME'] ?? ''),

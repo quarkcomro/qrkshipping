@@ -10,7 +10,11 @@
     "charset": "utf8mb4",
     "uninstall_policy": {
         "delete_secret_rows": true,
-        "retain_non_secret_tables": true,
+        "retain_non_secret_tables_by_default": true,
+        "allow_explicit_full_purge": true,
+        "full_purge_table_namespace": "qrkship_",
+        "reset_retains_non_secret_data_by_default": true,
+        "allow_explicit_reset_to_defaults": true,
         "automatic_legacy_migration": false
     },
     "tables": [

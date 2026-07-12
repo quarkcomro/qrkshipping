@@ -6,13 +6,16 @@ use PrestaShop\PrestaShop\Core\Context\ShopContext;
 use PrestaShop\PrestaShop\Core\Domain\Shop\ValueObject\ShopConstraint;
 use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use PrestaShopBundle\Security\Attribute\DemoRestricted;
+use Qrk\Commerce\Shipping\Adapter\PrestaShop\Install\FoundationFactory;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Multistore\ShopContextResolver;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Security\PrestaShopMasterKeyProvider;
 use Qrk\Commerce\Shipping\Controller\Admin\DashboardController;
 use Qrk\Commerce\Shipping\Controller\Admin\DiagnosticsController;
 use Qrk\Commerce\Shipping\Controller\Admin\HelpController;
+use Qrk\Commerce\Shipping\Application\Settings\SettingsCatalog;
 use Qrk\Commerce\Shipping\Controller\Admin\PreferencesController;
+use Qrk\Commerce\Shipping\Domain\Audit\AuditActor;
 use Qrk\Commerce\Shipping\Domain\Settings\SettingScope;
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\MigrationRecorder;
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaCatalog;
@@ -22,7 +25,20 @@ use Qrk\Commerce\Shipping\ModuleMetadata;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 $stage = $argv[1] ?? '';
-$allowedStages = ['installed', 'disabled', 'enabled', 'seeded', 'uninstalled', 'reinstalled'];
+$allowedStages = [
+    'installed',
+    'disabled',
+    'enabled',
+    'seeded',
+    'reset_retained',
+    'uninstalled',
+    'reinstalled',
+    'seed_reset_defaults',
+    'reset_defaults',
+    'seed_uninstall_purge',
+    'uninstalled_purged',
+    'reinstalled_after_purge',
+];
 if (!in_array($stage, $allowedStages, true)) {
     fwrite(STDERR, 'Usage: php scripts/prestashop-runtime-check.php <' . implode('|', $allowedStages) . ">\n");
     exit(2);
@@ -70,13 +86,29 @@ $assert(
 );
 $assert(PHP_VERSION_ID >= ModuleMetadata::MIN_PHP_VERSION_ID, 'The runtime PHP version is below 8.2.32.');
 
+if (getenv('QRK_EXPECT_LEGACY_DB_DEFAULT') === '1') {
+    $databaseDefaults = $connection->fetchOne(
+        'SELECT @@character_set_database AS `charset`, @@collation_database AS `collation`',
+    );
+    $databaseCharset = strtolower((string) ($databaseDefaults['charset'] ?? ''));
+    $databaseCollation = strtolower((string) ($databaseDefaults['collation'] ?? ''));
+    $assert(
+        in_array($databaseCharset, ['utf8', 'utf8mb3'], true),
+        'The runtime database does not use the requested legacy utf8/utf8mb3 default.',
+    );
+    $assert(
+        str_starts_with($databaseCollation, 'utf8_') || str_starts_with($databaseCollation, 'utf8mb3_'),
+        'The runtime database does not use the requested legacy utf8/utf8mb3 collation.',
+    );
+}
+
 $moduleRow = $connection->fetchOne(sprintf(
     'SELECT `id_module` FROM `%smodule` WHERE `name` = %s',
     $prefix,
     $connection->quote(ModuleMetadata::NAME),
 ));
 $installed = $moduleRow !== null;
-$expectedInstalled = !in_array($stage, ['uninstalled'], true);
+$expectedInstalled = !in_array($stage, ['uninstalled', 'uninstalled_purged'], true);
 $assert($installed === $expectedInstalled, 'The module installation state does not match the runtime stage.');
 
 $expectedTables = array_map(
@@ -97,12 +129,36 @@ $actualTables = array_map(
     static fn (array $row): string => (string) ($row['TABLE_NAME'] ?? ''),
     $tableRows,
 );
-$assert($actualTables === $expectedTables, 'The runtime foundation does not contain exactly the five approved tables.');
+$expectsFoundationTables = $stage !== 'uninstalled_purged';
+$assert(
+    $actualTables === ($expectsFoundationTables ? $expectedTables : []),
+    $expectsFoundationTables
+        ? 'The runtime foundation does not contain exactly the five approved tables.'
+        : 'Destructive uninstall left one or more approved QRK Shipping tables behind.',
+);
+
+$namespacePrefix = $prefix . 'qrkship_';
+$namespaceRows = $connection->fetchAll(sprintf(
+    'SELECT `TABLE_NAME` FROM `INFORMATION_SCHEMA`.`TABLES` '
+    . 'WHERE `TABLE_SCHEMA` = DATABASE() AND LEFT(`TABLE_NAME`, %d) = %s '
+    . 'ORDER BY `TABLE_NAME` ASC',
+    strlen($namespacePrefix),
+    $connection->quote($namespacePrefix),
+));
+$namespaceTables = array_map(
+    static fn (array $row): string => (string) ($row['TABLE_NAME'] ?? ''),
+    $namespaceRows,
+);
+if ($stage === 'uninstalled_purged') {
+    $assert($namespaceTables === [], 'Destructive uninstall left a table in the QRK Shipping namespace.');
+}
 
 $catalog = new SchemaCatalog();
-$inspector = new SchemaInspector($connection, $prefix);
-$inspector->assertCompatible($catalog);
-(new MigrationRecorder($connection, $prefix))->assertCurrent($catalog);
+if ($expectsFoundationTables) {
+    $inspector = new SchemaInspector($connection, $prefix);
+    $inspector->assertCompatible($catalog);
+    (new MigrationRecorder($connection, $prefix))->assertCurrent($catalog);
+}
 
 $strictMode = $connection->fetchOne('SELECT @@SESSION.sql_mode AS `mode`');
 $assert(
@@ -130,7 +186,7 @@ $tabRows = $connection->fetchAll(sprintf(
     $connection->quote(ModuleMetadata::NAME),
 ));
 
-if ($stage === 'uninstalled') {
+if (in_array($stage, ['uninstalled', 'uninstalled_purged'], true)) {
     $assert($tabRows === [], 'Module tabs were not removed during uninstall.');
 } else {
     $actualTabClasses = array_map(
@@ -170,6 +226,20 @@ if ($installed) {
     $assert($module->version === ModuleMetadata::VERSION, 'Loaded module version does not match metadata.');
     $expectedActive = $stage === 'disabled' ? 0 : 1;
     $assert((int) $module->active === $expectedActive, 'The module enabled state does not match the stage.');
+
+    $resetHookRow = $connection->fetchOne(sprintf(
+        'SELECT COUNT(*) AS `count` FROM `%shook_module` hm '
+        . 'INNER JOIN `%shook` h ON h.`id_hook` = hm.`id_hook` '
+        . 'WHERE hm.`id_module` = %d AND h.`name` = %s',
+        $prefix,
+        $prefix,
+        (int) $module->id,
+        $connection->quote('actionBeforeResetModule'),
+    ));
+    $assert(
+        (int) ($resetHookRow['count'] ?? 0) >= 1,
+        'The actionBeforeResetModule lifecycle hook is not registered.',
+    );
 
     $beforeCounts = [];
     foreach ($expectedTables as $tableName) {
@@ -257,7 +327,7 @@ if ($installed) {
     }
 }
 
-if ($stage === 'seeded') {
+$seedRetainedData = static function () use ($connection, $prefix): void {
     $now = gmdate('Y-m-d H:i:s');
     $connection->execute(sprintf(
         'DELETE FROM `%sqrkship_setting` WHERE `setting_key` = %s',
@@ -294,14 +364,17 @@ if ($stage === 'seeded') {
         $connection->quote($now),
         $connection->quote($now),
     ));
-}
+};
 
-if (in_array($stage, ['uninstalled', 'reinstalled'], true)) {
+$assertSecretRowsRemoved = static function () use ($connection, $prefix, $assert): void {
     $secretCount = $connection->fetchOne(sprintf(
         'SELECT COUNT(*) AS `count` FROM `%sqrkship_secret`',
         $prefix,
     ));
-    $assert((int) ($secretCount['count'] ?? -1) === 0, 'Encrypted secret rows survived uninstall.');
+    $assert((int) ($secretCount['count'] ?? -1) === 0, 'Encrypted secret rows survived a lifecycle operation.');
+};
+
+$assertRetainedMarker = static function (bool $expected) use ($connection, $prefix, $assert): void {
     $settingCount = $connection->fetchOne(sprintf(
         'SELECT COUNT(*) AS `count` FROM `%sqrkship_setting` '
         . 'WHERE `setting_key` = %s AND `value_text` = %s',
@@ -309,10 +382,104 @@ if (in_array($stage, ['uninstalled', 'reinstalled'], true)) {
         $connection->quote('runtime.retained_marker'),
         $connection->quote('retained'),
     ));
-    $assert((int) ($settingCount['count'] ?? 0) === 1, 'Non-secret foundation data was not retained.');
+    $assert(
+        ((int) ($settingCount['count'] ?? 0) === 1) === $expected,
+        $expected
+            ? 'Non-secret foundation data was not retained.'
+            : 'Reset-to-defaults retained a non-default marker.',
+    );
+};
+
+$assertLifecycleDefaults = static function () use ($assert): void {
+    $policy = FoundationFactory::lifecyclePolicy()->current();
+    $assert(!$policy->purgeOnUninstall(), 'Purge-on-uninstall did not return to its default value.');
+    $assert(!$policy->resetToDefaults(), 'Reset-to-defaults did not return to its default value.');
+};
+
+$assertLifecycleAudit = static function (string $eventCode, string $operation) use (
+    $connection,
+    $prefix,
+    $assert,
+): void {
+    $row = $connection->fetchOne(sprintf(
+        'SELECT `event_code`, `metadata_text` FROM `%sqrkship_audit_event` '
+        . 'WHERE `event_code` = %s ORDER BY `id_audit_event` DESC',
+        $prefix,
+        $connection->quote($eventCode),
+    ));
+    $assert($row !== null, 'Expected lifecycle audit event is missing.');
+    $metadata = json_decode((string) ($row['metadata_text'] ?? ''), true, flags: JSON_THROW_ON_ERROR);
+    $assert(
+        is_array($metadata) && ($metadata['lifecycle_operation'] ?? null) === $operation,
+        'Lifecycle audit operation metadata is incorrect.',
+    );
+};
+
+if ($stage === 'seeded') {
+    $seedRetainedData();
 }
 
-if (in_array($stage, ['installed', 'reinstalled'], true)) {
+if ($stage === 'reset_retained') {
+    $assertSecretRowsRemoved();
+    $assertRetainedMarker(true);
+    $assertLifecycleDefaults();
+    $assertLifecycleAudit('module.reset_secrets_removed', 'reset');
+}
+
+if (in_array($stage, ['uninstalled', 'reinstalled'], true)) {
+    $assertSecretRowsRemoved();
+    $assertRetainedMarker(true);
+    if ($stage === 'uninstalled') {
+        $assertLifecycleAudit('module.uninstalled_secrets_removed', 'uninstall');
+    }
+}
+
+if ($stage === 'seed_reset_defaults') {
+    FoundationFactory::lifecyclePolicy()->save(false, true, AuditActor::system());
+    $seedRetainedData();
+    $connection->execute(sprintf(
+        'CREATE TABLE `%sqrkship_runtime_probe` (`id` INT NOT NULL PRIMARY KEY) '
+        . 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
+        $prefix,
+    ));
+}
+
+if ($stage === 'reset_defaults') {
+    $assertSecretRowsRemoved();
+    $assertRetainedMarker(false);
+    $assertLifecycleDefaults();
+    $probe = $connection->fetchOne(sprintf(
+        'SELECT `TABLE_NAME` FROM `INFORMATION_SCHEMA`.`TABLES` '
+        . 'WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` = %s',
+        $connection->quote($prefix . 'qrkship_runtime_probe'),
+    ));
+    $assert($probe === null, 'Reset-to-defaults left a table in the QRK Shipping namespace.');
+}
+
+if ($stage === 'seed_uninstall_purge') {
+    FoundationFactory::lifecyclePolicy()->save(true, false, AuditActor::system());
+    $seedRetainedData();
+    $connection->execute(sprintf(
+        'CREATE TABLE `%sqrkship_runtime_probe` (`id` INT NOT NULL PRIMARY KEY) '
+        . 'ENGINE=InnoDB DEFAULT CHARSET=utf8mb4',
+        $prefix,
+    ));
+}
+
+if ($stage === 'reinstalled_after_purge') {
+    $assertSecretRowsRemoved();
+    $assertRetainedMarker(false);
+    $assertLifecycleDefaults();
+}
+
+$installationAuditStages = [
+    'installed',
+    'reinstalled',
+    'reset_retained',
+    'reset_defaults',
+    'reinstalled_after_purge',
+];
+if (in_array($stage, $installationAuditStages, true)) {
     $auditRow = $connection->fetchOne(sprintf(
         'SELECT `metadata_text` FROM `%sqrkship_audit_event` '
         . 'WHERE `event_code` = %s ORDER BY `id_audit_event` DESC',
@@ -321,7 +488,10 @@ if (in_array($stage, ['installed', 'reinstalled'], true)) {
     ));
     $assert($auditRow !== null, 'Foundation installation audit event is missing.');
     $metadata = json_decode((string) ($auditRow['metadata_text'] ?? ''), true, flags: JSON_THROW_ON_ERROR);
-    $expectedAction = $stage === 'installed' ? 'create' : 'adopt_existing';
+    $expectedAction = match ($stage) {
+        'installed', 'reset_defaults', 'reinstalled_after_purge' => 'create',
+        default => 'adopt_existing',
+    };
     $assert(
         is_array($metadata) && ($metadata['schema_action'] ?? null) === $expectedAction,
         'Foundation schema action audit does not match the lifecycle stage.',

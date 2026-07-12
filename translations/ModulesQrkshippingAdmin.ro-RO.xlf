@@ -202,10 +202,6 @@
         <source>This foundation is intentionally operationally inert.</source>
         <target>Această fundație este intenționat inertă operațional.</target>
       </trans-unit>
-      <trans-unit id="3d4d5ec51f0b065e">
-        <source>Uninstall QRK Shipping? Encrypted secrets will be deleted; non-secret foundation data will be retained.</source>
-        <target>Dezinstalați QRK Shipping? Secretele criptate vor fi șterse, iar datele nesensibile ale fundației vor fi păstrate.</target>
-      </trans-unit>
       <trans-unit id="91d492e6d8189bf2">
         <source>Unknown scope</source>
         <target>Context necunoscut</target>
@@ -221,6 +217,58 @@
       <trans-unit id="58916fa85382174f">
         <source>shop #%id%</source>
         <target>magazinul #%id%</target>
+      </trans-unit>
+      <trans-unit id="6e195dc9844c68b8">
+        <source>Lifecycle and data retention</source>
+        <target>Ciclu de viață și păstrarea datelor</target>
+      </trans-unit>
+      <trans-unit id="ed48a8632ce18fab">
+        <source>These options control destructive module lifecycle operations.</source>
+        <target>Aceste opțiuni controlează operațiunile distructive din ciclul de viață al modulului.</target>
+      </trans-unit>
+      <trans-unit id="bf07d53ac6c2525f">
+        <source>Encrypted secrets are always deleted during uninstall and reset. Enabled destructive options permanently remove additional QRK Shipping data.</source>
+        <target>Secretele criptate sunt șterse întotdeauna la dezinstalare și resetare. Opțiunile distructive activate elimină definitiv și alte date QRK Shipping.</target>
+      </trans-unit>
+      <trans-unit id="9bad72643255e8cf">
+        <source>Lifecycle policy is global. Select the All stores context to change it.</source>
+        <target>Politica ciclului de viață este globală. Selectați contextul Toate magazinele pentru a o modifica.</target>
+      </trans-unit>
+      <trans-unit id="5ff4b13a5f31a400">
+        <source>Delete all QRK Shipping tables and data on uninstall</source>
+        <target>Șterge toate tabelele și datele QRK Shipping la dezinstalare</target>
+      </trans-unit>
+      <trans-unit id="aadfcabdc6829f31">
+        <source>Enabled</source>
+        <target>Activat</target>
+      </trans-unit>
+      <trans-unit id="ace874199bfaad93">
+        <source>Disabled</source>
+        <target>Dezactivat</target>
+      </trans-unit>
+      <trans-unit id="f676aa23ab674f00">
+        <source>Reset all QRK Shipping data to catalog defaults on module reset</source>
+        <target>Resetează toate datele QRK Shipping la valorile implicite din catalog la resetarea modulului</target>
+      </trans-unit>
+      <trans-unit id="97b5e7182f46a7c5">
+        <source>When enabled, uninstall permanently removes every table in the QRK Shipping qrkship_ namespace, including settings, provider-account shells, audit events, and encrypted secrets.</source>
+        <target>Când este activată, dezinstalarea elimină definitiv fiecare tabel din spațiul de nume QRK Shipping qrkship_, inclusiv setările, structurile conturilor de furnizor, evenimentele de audit și secretele criptate.</target>
+      </trans-unit>
+      <trans-unit id="759f1212a1527d97">
+        <source>When enabled, Reset permanently removes all QRK Shipping data, recreates the foundation schema, and restores catalog defaults.</source>
+        <target>Când este activată, Reset elimină definitiv toate datele QRK Shipping, recreează schema fundației și restaurează valorile implicite din catalog.</target>
+      </trans-unit>
+      <trans-unit id="0c665d4ab96c18a7">
+        <source>Save lifecycle policy</source>
+        <target>Salvează politica ciclului de viață</target>
+      </trans-unit>
+      <trans-unit id="0e35044ad8910dbe">
+        <source>The global lifecycle policy was saved.</source>
+        <target>Politica globală a ciclului de viață a fost salvată.</target>
+      </trans-unit>
+      <trans-unit id="94b1cfd9d55a71e8">
+        <source>Uninstall QRK Shipping? Encrypted secrets are always deleted. Depending on the global lifecycle policy, all QRK Shipping tables and data may also be permanently deleted.</source>
+        <target>Dezinstalați QRK Shipping? Secretele criptate sunt șterse întotdeauna. În funcție de politica globală a ciclului de viață, toate tabelele și datele QRK Shipping pot fi, de asemenea, șterse definitiv.</target>
       </trans-unit>
     </body>
   </file>

@@ -3,30 +3,37 @@
 declare(strict_types=1);
 
 $root = dirname(__DIR__);
-$excludedSegments = ['/.git/', '/vendor/', '/build/', '/dist/', '/.phpstan.cache/', '/.phpunit.cache/'];
 $files = [];
-$iterator = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS),
-);
+$roots = [
+    'qrkshipping.php',
+    'scripts',
+    'src',
+    'stubs',
+    'tests',
+    'upgrade',
+];
 
-foreach ($iterator as $file) {
-    if (!$file instanceof SplFileInfo || !$file->isFile() || $file->getExtension() !== 'php') {
+foreach ($roots as $relativeRoot) {
+    $path = $root . '/' . $relativeRoot;
+    if (is_file($path) && pathinfo($path, PATHINFO_EXTENSION) === 'php') {
+        $files[] = $path;
+        continue;
+    }
+    if (!is_dir($path)) {
         continue;
     }
 
-    $path = str_replace('\\', '/', $file->getPathname());
-    $excluded = false;
-    foreach ($excludedSegments as $segment) {
-        if (str_contains($path, $segment)) {
-            $excluded = true;
-            break;
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
+    );
+    foreach ($iterator as $file) {
+        if ($file instanceof SplFileInfo && $file->isFile() && $file->getExtension() === 'php') {
+            $files[] = $file->getPathname();
         }
-    }
-    if (!$excluded) {
-        $files[] = $file->getPathname();
     }
 }
 
+$files = array_values(array_unique($files));
 sort($files);
 $failures = [];
 foreach ($files as $file) {

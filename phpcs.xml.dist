@@ -4,6 +4,7 @@
   <file>qrkshipping.php</file>
   <file>src</file>
   <file>tests</file>
+  <file>upgrade</file>
   <file>scripts</file>
   <arg name="basepath" value="."/>
   <arg name="colors"/>

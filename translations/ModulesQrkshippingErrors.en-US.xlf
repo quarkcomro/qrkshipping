@@ -78,6 +78,30 @@
         <source>The diagnostic preference could not be read safely. Editing is disabled.</source>
         <target>The diagnostic preference could not be read safely. Editing is disabled.</target>
       </trans-unit>
+      <trans-unit id="875e63933ffe0ae4">
+        <source>The global lifecycle policy could not be read safely. Editing is disabled.</source>
+        <target>The global lifecycle policy could not be read safely. Editing is disabled.</target>
+      </trans-unit>
+      <trans-unit id="8d9ac9480feea9e5">
+        <source>Lifecycle policy can be changed only in the All stores context.</source>
+        <target>Lifecycle policy can be changed only in the All stores context.</target>
+      </trans-unit>
+      <trans-unit id="935caf3d3b73879f">
+        <source>Uninstall was stopped because the global lifecycle policy could not be read safely.</source>
+        <target>Uninstall was stopped because the global lifecycle policy could not be read safely.</target>
+      </trans-unit>
+      <trans-unit id="592a0cf90677472a">
+        <source>Reset was stopped because the global lifecycle policy could not be read safely.</source>
+        <target>Reset was stopped because the global lifecycle policy could not be read safely.</target>
+      </trans-unit>
+      <trans-unit id="c79f9dc9d3fd058e">
+        <source>The lifecycle operation was stopped because QRK Shipping data could not be processed safely.</source>
+        <target>The lifecycle operation was stopped because QRK Shipping data could not be processed safely.</target>
+      </trans-unit>
+      <trans-unit id="c80ed035f5d7bccf">
+        <source>The QRK Shipping reset lifecycle hook could not be registered.</source>
+        <target>The QRK Shipping reset lifecycle hook could not be registered.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

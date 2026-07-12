@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.2] - 2026-07-12
+
+### Added
+
+- Global lifecycle controls in Preferences, editable only in the **All stores** context.
+- Optional destructive uninstall policy that removes every table and row in the module-owned `<database-prefix>qrkship_` namespace.
+- Optional reset-to-defaults policy that recreates the foundation schema and restores catalog defaults during module Reset.
+- Unit, database and PrestaShop runtime scenarios for retained-data reset, destructive reset, retained-data uninstall and destructive uninstall.
+
+### Fixed
+
+- Bypass the PrestaShop SQL result cache for QRK Shipping authoritative reads, including `INFORMATION_SCHEMA`, so Diagnostics observes schema changes immediately without a manual global cache clear.
+- Register the PrestaShop reset lifecycle hook so Back Office Reset applies the approved global reset policy.
+
 ## [0.1.1] - 2026-07-11
 
 ### Fixed

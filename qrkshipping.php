@@ -11,7 +11,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Install\FoundationFactory;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Install\RuntimeRequirementFailure;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Install\RuntimeRequirementsChecker;
+use Qrk\Commerce\Shipping\Adapter\PrestaShop\Lifecycle\LifecycleOperationDetector;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection;
+use Qrk\Commerce\Shipping\Application\Lifecycle\LifecycleOperation;
 use Qrk\Commerce\Shipping\Controller\Admin\DashboardController;
 use Qrk\Commerce\Shipping\Controller\Admin\DiagnosticsController;
 use Qrk\Commerce\Shipping\Controller\Admin\HelpController;
@@ -22,6 +24,8 @@ final class QrkShipping extends CarrierModule
 {
     private const ADMIN_DOMAIN = 'Modules.Qrkshipping.Admin';
     private const ERROR_DOMAIN = 'Modules.Qrkshipping.Errors';
+
+    private static bool $resetInProgress = false;
 
     public function __construct()
     {
@@ -47,7 +51,9 @@ final class QrkShipping extends CarrierModule
             self::ADMIN_DOMAIN,
         );
         $this->confirmUninstall = $this->trans(
-            'Uninstall QRK Shipping? Encrypted secrets will be deleted; non-secret foundation data will be retained.',
+            'Uninstall QRK Shipping? Encrypted secrets are always deleted. '
+                . 'Depending on the global lifecycle policy, all QRK Shipping tables and data '
+                . 'may also be permanently deleted.',
             [],
             self::ADMIN_DOMAIN,
         );
@@ -66,6 +72,17 @@ final class QrkShipping extends CarrierModule
         }
 
         if (!parent::install()) {
+            return false;
+        }
+
+        if (!$this->registerHook('actionBeforeResetModule')) {
+            $this->_errors[] = $this->trans(
+                'The QRK Shipping reset lifecycle hook could not be registered.',
+                [],
+                self::ERROR_DOMAIN,
+            );
+            parent::uninstall();
+
             return false;
         }
 
@@ -97,11 +114,73 @@ final class QrkShipping extends CarrierModule
 
     public function uninstall(): bool
     {
+        $isReset = self::$resetInProgress || (new LifecycleOperationDetector())->isResetFor($this->name);
+        self::$resetInProgress = false;
+
         try {
-            FoundationFactory::uninstaller()->removeSecretsAndKeepData();
+            $operation = $isReset ? LifecycleOperation::RESET : LifecycleOperation::UNINSTALL;
+            $policy = FoundationFactory::lifecyclePolicy()->current();
+            $purgeAllData = $policy->purgeFor($operation);
+        } catch (Throwable) {
+            $message = $isReset
+                ? 'Reset was stopped because the global lifecycle policy could not be read safely.'
+                : 'Uninstall was stopped because the global lifecycle policy could not be read safely.';
+            $this->_errors[] = $this->trans($message, [], self::ERROR_DOMAIN);
+
+            return false;
+        }
+
+        return $this->uninstallFoundation(
+            $purgeAllData,
+            $operation,
+        );
+    }
+
+    /**
+     * Direct reset path used by PrestaShop callers that request keep-data reset semantics.
+     * The standard Back Office reset path is identified through actionBeforeResetModule.
+     */
+    public function reset(): bool
+    {
+        self::$resetInProgress = false;
+
+        try {
+            $policy = FoundationFactory::lifecyclePolicy()->current();
+            $resetToDefaults = $policy->purgeFor(LifecycleOperation::RESET);
+            FoundationFactory::uninstaller()->uninstall($resetToDefaults, LifecycleOperation::RESET);
+            if ($resetToDefaults) {
+                FoundationFactory::installer()->install();
+            }
         } catch (Throwable) {
             $this->_errors[] = $this->trans(
-                'Uninstall was stopped because encrypted secrets could not be removed safely.',
+                'The lifecycle operation was stopped because QRK Shipping data could not be processed safely.',
+                [],
+                self::ERROR_DOMAIN,
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function hookActionBeforeResetModule(array $parameters): void
+    {
+        if (($parameters['moduleName'] ?? null) === $this->name) {
+            self::$resetInProgress = true;
+        }
+    }
+
+    private function uninstallFoundation(bool $purgeAllData, LifecycleOperation $operation): bool
+    {
+        try {
+            FoundationFactory::uninstaller()->uninstall($purgeAllData, $operation);
+        } catch (Throwable) {
+            $this->_errors[] = $this->trans(
+                'The lifecycle operation was stopped because QRK Shipping data could not be processed safely.',
                 [],
                 self::ERROR_DOMAIN,
             );

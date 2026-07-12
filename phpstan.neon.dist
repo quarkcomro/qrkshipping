@@ -4,6 +4,7 @@ parameters:
     - qrkshipping.php
     - src
     - tests
+    - upgrade
     - scripts
     - .php-cs-fixer.dist.php
   stubFiles:

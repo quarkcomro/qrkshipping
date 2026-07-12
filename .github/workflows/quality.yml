@@ -121,6 +121,9 @@ jobs:
       QRK_DB_USER: root
       QRK_DB_PASSWORD: qrk_root_password
       QRK_DB_NAME: prestashop_runtime
+      QRK_DB_CHARSET: utf8
+      QRK_DB_COLLATION: utf8_general_ci
+      QRK_EXPECT_LEGACY_DB_DEFAULT: '1'
       QRK_PS_ROOT: ${{ github.workspace }}/prestashop
       PRESTASHOP_VERSION: 9.1.4
     steps:
@@ -182,7 +185,7 @@ jobs:
             --rewrite=0
 
       - name: Install the release ZIP into PrestaShop
-        run: unzip -q dist/qrkshipping-0.1.1.zip -d prestashop/modules
+        run: unzip -q dist/qrkshipping-0.1.2.zip -d prestashop/modules
 
       - name: Install QRK Shipping
         run: |
@@ -220,11 +223,23 @@ jobs:
           php prestashop/bin/console prestashop:module enable qrkshipping --env=prod --no-debug
           php scripts/prestashop-runtime-check.php enabled
 
-      - name: Seed uninstall-retention probes
-        run: php scripts/prestashop-runtime-check.php seeded
-
-      - name: Validate uninstall retention and mandatory secret deletion
+      - name: Validate default reset retention
         run: |
+          php scripts/prestashop-runtime-check.php seeded
+          php prestashop/bin/console prestashop:module reset qrkshipping --env=prod --no-debug
+          php scripts/prestashop-runtime-check.php reset_retained
+
+      - name: Validate explicit reset-to-defaults policy while disabled
+        run: |
+          php scripts/prestashop-runtime-check.php seed_reset_defaults
+          php prestashop/bin/console prestashop:module disable qrkshipping --env=prod --no-debug
+          php scripts/prestashop-runtime-check.php disabled
+          php prestashop/bin/console prestashop:module reset qrkshipping --env=prod --no-debug
+          php scripts/prestashop-runtime-check.php reset_defaults
+
+      - name: Validate default uninstall retention and mandatory secret deletion
+        run: |
+          php scripts/prestashop-runtime-check.php seeded
           php prestashop/bin/console prestashop:module uninstall qrkshipping --env=prod --no-debug
           php scripts/prestashop-runtime-check.php uninstalled
 
@@ -232,6 +247,17 @@ jobs:
         run: |
           php prestashop/bin/console prestashop:module install qrkshipping --env=prod --no-debug
           php scripts/prestashop-runtime-check.php reinstalled
+
+      - name: Validate explicit destructive uninstall policy
+        run: |
+          php scripts/prestashop-runtime-check.php seed_uninstall_purge
+          php prestashop/bin/console prestashop:module uninstall qrkshipping --env=prod --no-debug
+          php scripts/prestashop-runtime-check.php uninstalled_purged
+
+      - name: Validate reinstall after destructive uninstall
+        run: |
+          php prestashop/bin/console prestashop:module install qrkshipping --env=prod --no-debug
+          php scripts/prestashop-runtime-check.php reinstalled_after_purge
 
   artifact:
     name: Reproducible release artifact
@@ -257,17 +283,17 @@ jobs:
           SOURCE_DATE_EPOCH: '1783728000'
         run: |
           composer build
-          first_sha="$(cut -d' ' -f1 dist/qrkshipping-0.1.1.zip.sha256)"
+          first_sha="$(cut -d' ' -f1 dist/qrkshipping-0.1.2.zip.sha256)"
           composer build
-          second_sha="$(cut -d' ' -f1 dist/qrkshipping-0.1.1.zip.sha256)"
+          second_sha="$(cut -d' ' -f1 dist/qrkshipping-0.1.2.zip.sha256)"
           test "$first_sha" = "$second_sha"
 
       - name: Upload release evidence
         uses: actions/upload-artifact@v4
         with:
-          name: qrkshipping-0.1.1
+          name: qrkshipping-0.1.2
           path: |
-            dist/qrkshipping-0.1.1.zip
-            dist/qrkshipping-0.1.1.zip.sha256
+            dist/qrkshipping-0.1.2.zip
+            dist/qrkshipping-0.1.2.zip.sha256
             dist/BUILD_REPORT.json
           if-no-files-found: error

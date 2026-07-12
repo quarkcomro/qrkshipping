@@ -29,6 +29,8 @@ namespace {
         public function __construct() {}
         public function install(): bool { return true; }
         public function uninstall(): bool { return true; }
+        public function reset(): bool { return true; }
+        public function registerHook(string|array $hookName, array|null $shopList = null): bool { return true; }
         public static function getInstanceByName(string $name): Module|false { return false; }
         /** @param array<string, string> $parameters */
         public function trans(string $id, array $parameters = [], string|null $domain = null, string|null $locale = null): string { return $id; }
@@ -66,14 +68,48 @@ namespace {
 
     class Db
     {
-        public static function getInstance(bool $useMaster = true): self { return new self(); }
+        private static self|null $testingInstance = null;
+        /** @var list<array{sql: string, array: bool, use_cache: bool}> */
+        public array $executeSCalls = [];
+        /** @var list<array<string, mixed>>|false */
+        public array|false $executeSResult = [];
+
+        public static function getInstance(bool $useMaster = true): self
+        {
+            return self::$testingInstance ?? new self();
+        }
+
+        public static function setInstanceForTesting(self $instance): void
+        {
+            self::$testingInstance = $instance;
+        }
+
+        public static function deleteTestingInstance(): void
+        {
+            self::$testingInstance = null;
+        }
+
         public function execute(string $sql): bool { return true; }
         /** @return list<array<string, mixed>>|false */
-        public function executeS(string $sql): array|false { return []; }
+        public function executeS(string $sql, bool $array = true, bool $useCache = true): array|false
+        {
+            $this->executeSCalls[] = ['sql' => $sql, 'array' => $array, 'use_cache' => $useCache];
+
+            return $this->executeSResult;
+        }
         public function escape(string $value, bool $htmlOk = false, bool $bqSql = false): string { return $value; }
         public function Insert_ID(): int { return 0; }
         public function Affected_Rows(): int { return 0; }
         public function getMsgError(): string { return ''; }
+    }
+}
+
+namespace PrestaShop\PrestaShop\Adapter {
+    use Psr\Container\ContainerInterface;
+
+    final class SymfonyContainer
+    {
+        public static function getInstance(): ?ContainerInterface { return null; }
     }
 }
 
@@ -86,6 +122,9 @@ namespace PrestaShop\PrestaShop\Core\Context {
     final class EmployeeContext
     {
         public function getEmployee(): Employee|null { return new Employee(); }
+        public function hasAuthorizationOnShopGroup(int $shopGroupId): bool { return true; }
+        public function hasAuthorizationOnShop(int $shopId): bool { return true; }
+        public function hasAuthorizationForAllShops(): bool { return true; }
     }
 
     class ShopContext

@@ -202,10 +202,6 @@
         <source>This foundation is intentionally operationally inert.</source>
         <target>This foundation is intentionally operationally inert.</target>
       </trans-unit>
-      <trans-unit id="3d4d5ec51f0b065e">
-        <source>Uninstall QRK Shipping? Encrypted secrets will be deleted; non-secret foundation data will be retained.</source>
-        <target>Uninstall QRK Shipping? Encrypted secrets will be deleted; non-secret foundation data will be retained.</target>
-      </trans-unit>
       <trans-unit id="91d492e6d8189bf2">
         <source>Unknown scope</source>
         <target>Unknown scope</target>
@@ -221,6 +217,58 @@
       <trans-unit id="58916fa85382174f">
         <source>shop #%id%</source>
         <target>shop #%id%</target>
+      </trans-unit>
+      <trans-unit id="6e195dc9844c68b8">
+        <source>Lifecycle and data retention</source>
+        <target>Lifecycle and data retention</target>
+      </trans-unit>
+      <trans-unit id="ed48a8632ce18fab">
+        <source>These options control destructive module lifecycle operations.</source>
+        <target>These options control destructive module lifecycle operations.</target>
+      </trans-unit>
+      <trans-unit id="bf07d53ac6c2525f">
+        <source>Encrypted secrets are always deleted during uninstall and reset. Enabled destructive options permanently remove additional QRK Shipping data.</source>
+        <target>Encrypted secrets are always deleted during uninstall and reset. Enabled destructive options permanently remove additional QRK Shipping data.</target>
+      </trans-unit>
+      <trans-unit id="9bad72643255e8cf">
+        <source>Lifecycle policy is global. Select the All stores context to change it.</source>
+        <target>Lifecycle policy is global. Select the All stores context to change it.</target>
+      </trans-unit>
+      <trans-unit id="5ff4b13a5f31a400">
+        <source>Delete all QRK Shipping tables and data on uninstall</source>
+        <target>Delete all QRK Shipping tables and data on uninstall</target>
+      </trans-unit>
+      <trans-unit id="aadfcabdc6829f31">
+        <source>Enabled</source>
+        <target>Enabled</target>
+      </trans-unit>
+      <trans-unit id="ace874199bfaad93">
+        <source>Disabled</source>
+        <target>Disabled</target>
+      </trans-unit>
+      <trans-unit id="f676aa23ab674f00">
+        <source>Reset all QRK Shipping data to catalog defaults on module reset</source>
+        <target>Reset all QRK Shipping data to catalog defaults on module reset</target>
+      </trans-unit>
+      <trans-unit id="97b5e7182f46a7c5">
+        <source>When enabled, uninstall permanently removes every table in the QRK Shipping qrkship_ namespace, including settings, provider-account shells, audit events, and encrypted secrets.</source>
+        <target>When enabled, uninstall permanently removes every table in the QRK Shipping qrkship_ namespace, including settings, provider-account shells, audit events, and encrypted secrets.</target>
+      </trans-unit>
+      <trans-unit id="759f1212a1527d97">
+        <source>When enabled, Reset permanently removes all QRK Shipping data, recreates the foundation schema, and restores catalog defaults.</source>
+        <target>When enabled, Reset permanently removes all QRK Shipping data, recreates the foundation schema, and restores catalog defaults.</target>
+      </trans-unit>
+      <trans-unit id="0c665d4ab96c18a7">
+        <source>Save lifecycle policy</source>
+        <target>Save lifecycle policy</target>
+      </trans-unit>
+      <trans-unit id="0e35044ad8910dbe">
+        <source>The global lifecycle policy was saved.</source>
+        <target>The global lifecycle policy was saved.</target>
+      </trans-unit>
+      <trans-unit id="94b1cfd9d55a71e8">
+        <source>Uninstall QRK Shipping? Encrypted secrets are always deleted. Depending on the global lifecycle policy, all QRK Shipping tables and data may also be permanently deleted.</source>
+        <target>Uninstall QRK Shipping? Encrypted secrets are always deleted. Depending on the global lifecycle policy, all QRK Shipping tables and data may also be permanently deleted.</target>
       </trans-unit>
     </body>
   </file>

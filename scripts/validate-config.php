@@ -61,37 +61,6 @@ function parseTopLevelYamlMapping(string $path): array
     return $mapping;
 }
 
-/** @return list<string> */
-function xmlTagValues(string $xml, string $tag): array
-{
-    preg_match_all('/<' . preg_quote($tag, '/') . '(?:\s[^>]*)?>(.*?)<\/' . preg_quote($tag, '/') . '>/s', $xml, $matches);
-
-    return array_map(
-        static function (string $value): string {
-            $value = preg_replace('/^<!\[CDATA\[(.*)\]\]>$/s', '$1', trim($value)) ?? $value;
-
-            return trim(html_entity_decode($value, ENT_QUOTES | ENT_XML1, 'UTF-8'));
-        },
-        $matches[1] ?? [],
-    );
-}
-
-function xmlAttribute(string $tag, string $attribute): string
-{
-    if (preg_match('/\b' . preg_quote($attribute, '/') . '=("([^"]*)"|\'([^\']*)\')/', $tag, $matches) !== 1) {
-        return '';
-    }
-
-    return html_entity_decode($matches[2] !== '' ? $matches[2] : $matches[3], ENT_QUOTES | ENT_XML1, 'UTF-8');
-}
-
-function configValue(string $xml, string $tag): string
-{
-    $values = xmlTagValues($xml, $tag);
-
-    return $values[0] ?? '';
-}
-
 /** @var array<string, mixed> $decodedJson */
 $decodedJson = [];
 foreach (['composer.json', 'schema-manifest.json'] as $jsonFile) {
@@ -144,67 +113,101 @@ if (is_array($routes)) {
     if (array_keys($routes) !== $expectedRoutes) {
         $errors[] = 'config/routes.yml: route set or authority order differs from the approved contract';
     }
+
+    foreach ($routes as $routeName => $route) {
+        if (!is_array($route) || !isset($route['path'], $route['methods'], $route['defaults'])) {
+            $errors[] = sprintf('config/routes.yml: route "%s" is incomplete', (string) $routeName);
+        }
+    }
 }
 
-$configXmlPath = $root . '/config.xml';
-$configXml = (string) file_get_contents($configXmlPath);
-if (!str_contains($configXml, '<module>') || !str_contains($configXml, '</module>')) {
-    $errors[] = 'config.xml: invalid module XML structure';
+$upgradeFunction = 'upgrade_module_' . str_replace('.', '_', ModuleMetadata::VERSION);
+$upgradeFile = $root . '/upgrade/upgrade-' . ModuleMetadata::VERSION . '.php';
+if (!is_file($upgradeFile)) {
+    $errors[] = 'upgrade: current module version has no upgrade entrypoint';
+} else {
+    $upgradeContent = (string) file_get_contents($upgradeFile);
+    if (!str_contains($upgradeContent, 'function ' . $upgradeFunction . '(')) {
+        $errors[] = 'upgrade: current module version function name is invalid';
+    }
 }
-if (preg_match('/<!DOCTYPE|<!ENTITY/i', $configXml) === 1) {
-    $errors[] = 'config.xml: external XML entity declarations are forbidden';
-}
+
+$xlfFiles = glob($root . '/translations/*.xlf') ?: [];
+$xmlFiles = [$root . '/config.xml', ...$xlfFiles];
 
 /** @var array<string, array<string, array<string, true>>> $translationSources */
 $translationSources = [];
-$xlfFiles = glob($root . '/translations/*.xlf') ?: [];
-foreach ($xlfFiles as $xmlFile) {
-    $content = (string) file_get_contents($xmlFile);
-    $baseName = basename($xmlFile);
+foreach ($xmlFiles as $xmlFile) {
+    $document = new DOMDocument();
+    $previous = libxml_use_internal_errors(true);
+    $loaded = $document->load($xmlFile, LIBXML_NONET | LIBXML_NOBLANKS);
+    $xmlErrors = libxml_get_errors();
+    libxml_clear_errors();
+    libxml_use_internal_errors($previous);
 
-    if (preg_match('/<!DOCTYPE|<!ENTITY/i', $content) === 1) {
-        $errors[] = $baseName . ': external XML entity declarations are forbidden';
+    if (!$loaded || $xmlErrors !== []) {
+        $errors[] = basename($xmlFile) . ': invalid XML';
         continue;
     }
-    if (!str_contains($content, '<xliff') || !str_contains($content, '</xliff>')) {
-        $errors[] = $baseName . ': invalid XLIFF structure';
+
+    if (!str_ends_with($xmlFile, '.xlf')) {
         continue;
     }
 
+    $xpath = new DOMXPath($document);
+    $xpath->registerNamespace('x', 'urn:oasis:names:tc:xliff:document:1.2');
+    $fileNodes = $xpath->query('/x:xliff/x:file');
+
+    if ($fileNodes === false || $fileNodes->length !== 1) {
+        $errors[] = basename($xmlFile) . ': expected exactly one XLIFF file element';
+        continue;
+    }
+
+    $fileNode = $fileNodes->item(0);
+    if (!$fileNode instanceof DOMElement) {
+        $errors[] = basename($xmlFile) . ': XLIFF file element is invalid';
+        continue;
+    }
+
+    $domain = $fileNode->getAttribute('original');
+    $language = $fileNode->getAttribute('target-language');
     $expectedPattern = '/^ModulesQrkshipping([A-Za-z]+)\.(en-US|ro-RO)\.xlf$/D';
-    if (preg_match($expectedPattern, $baseName, $matches) !== 1) {
-        $errors[] = $baseName . ': filename does not follow the module XLF convention';
+
+    if (preg_match($expectedPattern, basename($xmlFile), $matches) !== 1) {
+        $errors[] = basename($xmlFile) . ': filename does not follow the module XLF convention';
         continue;
     }
 
-    if (preg_match('/<file\b([^>]*)>/s', $content, $fileMatches) !== 1) {
-        $errors[] = $baseName . ': expected exactly one XLIFF file element';
-        continue;
-    }
-
-    $domain = xmlAttribute($fileMatches[1], 'original');
-    $language = xmlAttribute($fileMatches[1], 'target-language');
     $expectedDomain = 'Modules.Qrkshipping.' . $matches[1];
     if ($domain !== $expectedDomain || $language !== $matches[2]) {
-        $errors[] = $baseName . ': declared domain or language does not match its filename';
+        $errors[] = basename($xmlFile) . ': declared domain or language does not match its filename';
     }
 
-    preg_match_all('/<trans-unit\b[^>]*>(.*?)<\/trans-unit>/s', $content, $unitMatches);
-    if (($unitMatches[1] ?? []) === []) {
-        $errors[] = $baseName . ': translation catalog is empty';
+    $units = $xpath->query('/x:xliff/x:file/x:body/x:trans-unit');
+    if ($units === false || $units->length === 0) {
+        $errors[] = basename($xmlFile) . ': translation catalog is empty';
         continue;
     }
 
-    foreach ($unitMatches[1] as $unit) {
-        $source = xmlTagValues($unit, 'source')[0] ?? '';
-        $target = xmlTagValues($unit, 'target')[0] ?? '';
+    foreach ($units as $unit) {
+        if (!$unit instanceof DOMElement) {
+            continue;
+        }
+
+        $sourceNodes = $xpath->query('x:source', $unit);
+        $targetNodes = $xpath->query('x:target', $unit);
+        $sourceNode = $sourceNodes === false ? null : $sourceNodes->item(0);
+        $targetNode = $targetNodes === false ? null : $targetNodes->item(0);
+        $source = $sourceNode instanceof DOMNode ? trim($sourceNode->textContent) : '';
+        $target = $targetNode instanceof DOMNode ? trim($targetNode->textContent) : '';
+
         if ($source === '' || $target === '') {
-            $errors[] = $baseName . ': empty source or target translation';
+            $errors[] = basename($xmlFile) . ': empty source or target translation';
             continue;
         }
 
         if (isset($translationSources[$domain][$language][$source])) {
-            $errors[] = $baseName . ': duplicate source message "' . $source . '"';
+            $errors[] = basename($xmlFile) . ': duplicate source message "' . $source . '"';
         }
 
         $translationSources[$domain][$language][$source] = true;
@@ -254,14 +257,22 @@ if (is_array($manifest)) {
     }
 }
 
-if (configValue($configXml, 'name') !== ModuleMetadata::NAME) {
-    $errors[] = 'config.xml: module name differs from ModuleMetadata';
-}
-if (configValue($configXml, 'version') !== ModuleMetadata::VERSION) {
-    $errors[] = 'config.xml: module version differs from ModuleMetadata';
-}
-if (configValue($configXml, 'min') !== ModuleMetadata::MIN_PRESTASHOP_VERSION) {
-    $errors[] = 'config.xml: minimum PrestaShop version differs from ModuleMetadata';
+$configDocument = new DOMDocument();
+if ($configDocument->load($root . '/config.xml', LIBXML_NONET | LIBXML_NOBLANKS)) {
+    $configXpath = new DOMXPath($configDocument);
+    $moduleName = trim((string) $configXpath->evaluate('string(/module/name)'));
+    $moduleVersion = trim((string) $configXpath->evaluate('string(/module/version)'));
+    $minimumVersion = trim((string) $configXpath->evaluate('string(/module/ps_versions_compliancy/min)'));
+
+    if ($moduleName !== ModuleMetadata::NAME) {
+        $errors[] = 'config.xml: module name differs from ModuleMetadata';
+    }
+    if ($moduleVersion !== ModuleMetadata::VERSION) {
+        $errors[] = 'config.xml: module version differs from ModuleMetadata';
+    }
+    if ($minimumVersion !== ModuleMetadata::MIN_PRESTASHOP_VERSION) {
+        $errors[] = 'config.xml: minimum PrestaShop version differs from ModuleMetadata';
+    }
 }
 
 $twigTemplates = glob($root . '/views/templates/admin/*.twig') ?: [];
@@ -297,7 +308,6 @@ if ($errors !== []) {
 }
 
 fwrite(STDOUT, sprintf(
-    "Configuration integrity: JSON, YAML, XML/XLF, schema manifest and %d Twig templates passed (%s).\n",
+    "Configuration integrity: JSON, YAML, XML/XLF, schema manifest and %d Twig templates passed.\n",
     count($twigTemplates),
-    $twigSyntaxMode,
 ));
