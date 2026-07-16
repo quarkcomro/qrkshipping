@@ -86,9 +86,9 @@
         <source>By default, Reset retains non-secret data. A global preference can instead recreate the foundation with catalog defaults.</source>
         <target>By default, Reset retains non-secret data. A global preference can instead recreate the foundation with catalog defaults.</target>
       </trans-unit>
-      <trans-unit id="77b24e997ee1595c">
-        <source>Lifecycle preferences are editable only in the All stores context.</source>
-        <target>Lifecycle preferences are editable only in the All stores context.</target>
+      <trans-unit id="62be72d53be290bf">
+        <source>Lifecycle preferences remain global. With two or more configured stores, edit them only in the All stores context. With one configured store, authorized administrators can edit the same global policy from the current store context.</source>
+        <target>Lifecycle preferences remain global. With two or more configured stores, edit them only in the All stores context. With one configured store, authorized administrators can edit the same global policy from the current store context.</target>
       </trans-unit>
     </body>
   </file>

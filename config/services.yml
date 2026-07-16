@@ -122,6 +122,7 @@ services:
 
   Qrk\Commerce\Shipping\Adapter\PrestaShop\Multistore\ShopContextResolver:
     autowire: true
+  Qrk\Commerce\Shipping\Adapter\PrestaShop\Multistore\ShopTopology: ~
 
   Qrk\Commerce\Shipping\Adapter\PrestaShop\Diagnostics\FoundationDiagnosticsService:
     arguments:

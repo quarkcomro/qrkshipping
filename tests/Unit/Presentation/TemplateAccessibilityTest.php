@@ -47,6 +47,11 @@ final class TemplateAccessibilityTest extends TestCase
         self::assertStringContainsString('id="purge_on_uninstall_help"', $preferences);
         self::assertStringContainsString('aria-describedby="reset_to_defaults_help"', $preferences);
         self::assertStringContainsString('id="reset_to_defaults_help"', $preferences);
+        self::assertStringContainsString('lifecyclePolicySingleShopFallback', $preferences);
+        self::assertStringContainsString(
+            'Because fewer than two stores are configured',
+            $preferences,
+        );
         self::assertStringContainsString('maxlength="160"', $preferences);
         self::assertStringContainsString('required', $preferences);
     }
@@ -70,7 +75,10 @@ final class TemplateAccessibilityTest extends TestCase
         self::assertStringContainsString('There is no connection test or credential form', $help);
         self::assertStringContainsString('None is created in this increment.', $help);
         self::assertStringContainsString('Encrypted secrets are always deleted during uninstall and reset.', $help);
-        self::assertStringContainsString('Lifecycle preferences are editable only in the All stores context.', $help);
+        self::assertStringContainsString(
+            'With one configured store, authorized administrators can edit the same global policy',
+            $help,
+        );
         self::assertStringContainsString('fails closed', $help);
     }
 

@@ -82,9 +82,17 @@
         <source>The global lifecycle policy could not be read safely. Editing is disabled.</source>
         <target>Politica globală a ciclului de viață nu a putut fi citită în siguranță. Editarea este dezactivată.</target>
       </trans-unit>
-      <trans-unit id="8d9ac9480feea9e5">
-        <source>Lifecycle policy can be changed only in the All stores context.</source>
-        <target>Politica ciclului de viață poate fi modificată numai în contextul Toate magazinele.</target>
+      <trans-unit id="496d03fa6861f50a">
+        <source>Lifecycle policy can be changed only in the All stores context when two or more stores are configured.</source>
+        <target>Politica ciclului de viață poate fi modificată numai în contextul Toate magazinele atunci când sunt configurate două sau mai multe magazine.</target>
+      </trans-unit>
+      <trans-unit id="8160d8bb8776127f">
+        <source>You are not authorized to change the global lifecycle policy.</source>
+        <target>Nu sunteți autorizat să modificați politica globală a ciclului de viață.</target>
+      </trans-unit>
+      <trans-unit id="2f47d0832c09aa55">
+        <source>The global lifecycle policy access rules could not be evaluated safely. Editing is disabled.</source>
+        <target>Regulile de acces pentru politica globală a ciclului de viață nu au putut fi evaluate în siguranță. Editarea este dezactivată.</target>
       </trans-unit>
       <trans-unit id="935caf3d3b73879f">
         <source>Uninstall was stopped because the global lifecycle policy could not be read safely.</source>

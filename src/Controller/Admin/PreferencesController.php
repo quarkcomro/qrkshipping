@@ -8,7 +8,9 @@ use InvalidArgumentException;
 use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use PrestaShopBundle\Security\Attribute\DemoRestricted;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Multistore\ShopContextResolver;
+use Qrk\Commerce\Shipping\Adapter\PrestaShop\Multistore\ShopTopology;
 use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicy;
+use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicyAccess;
 use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicyService;
 use Qrk\Commerce\Shipping\Application\Provider\ProviderAccountService;
 use Qrk\Commerce\Shipping\Application\Settings\SettingsCatalog;
@@ -30,6 +32,7 @@ final class PreferencesController extends AbstractQrkShippingController
 
     public function __construct(
         private readonly ShopContextResolver $shopContextResolver,
+        private readonly ShopTopology $shopTopology,
         private readonly SettingsService $settings,
         private readonly LifecyclePolicyService $lifecyclePolicy,
         private readonly ProviderAccountService $providerAccounts,
@@ -66,6 +69,19 @@ final class PreferencesController extends AbstractQrkShippingController
             $lifecyclePolicyReadable = false;
         }
 
+        $lifecyclePolicyAccessReadable = true;
+        $lifecyclePolicyEditable = false;
+        $lifecyclePolicySingleShopFallback = false;
+        $lifecyclePolicyAuthorizedForAllShops = false;
+        try {
+            $access = $this->lifecyclePolicyAccess($context->scope()->type());
+            $lifecyclePolicyEditable = $access->canEdit();
+            $lifecyclePolicySingleShopFallback = $access->usesSingleShopFallback();
+            $lifecyclePolicyAuthorizedForAllShops = $access->isAuthorizedForAllShops();
+        } catch (Throwable) {
+            $lifecyclePolicyAccessReadable = false;
+        }
+
         $account = null;
         $accountReadable = true;
 
@@ -88,6 +104,10 @@ final class PreferencesController extends AbstractQrkShippingController
             'diagnosticsInherited' => $diagnosticsInherited,
             'diagnosticsPreferenceReadable' => $diagnosticsPreferenceReadable,
             'lifecyclePolicyReadable' => $lifecyclePolicyReadable,
+            'lifecyclePolicyAccessReadable' => $lifecyclePolicyAccessReadable,
+            'lifecyclePolicyEditable' => $lifecyclePolicyEditable,
+            'lifecyclePolicySingleShopFallback' => $lifecyclePolicySingleShopFallback,
+            'lifecyclePolicyAuthorizedForAllShops' => $lifecyclePolicyAuthorizedForAllShops,
             'purgeOnUninstall' => $policy->purgeOnUninstall(),
             'resetToDefaults' => $policy->resetToDefaults(),
             'providerAccount' => $account,
@@ -134,12 +154,13 @@ final class PreferencesController extends AbstractQrkShippingController
 
                 $this->addFlash('success', $this->trans('Diagnostic preferences were saved.', [], self::ADMIN_DOMAIN));
             } elseif ($action === 'save_lifecycle_policy') {
-                if ($context->scope()->type() !== SettingScopeType::ALL) {
-                    $this->addFlash('error', $this->trans(
-                        'Lifecycle policy can be changed only in the All stores context.',
-                        [],
-                        self::ERROR_DOMAIN,
-                    ));
+                $access = $this->lifecyclePolicyAccess($context->scope()->type());
+                if (!$access->canEdit()) {
+                    $message = $access->isAuthorizedForAllShops()
+                        ? 'Lifecycle policy can be changed only in the All stores context when '
+                            . 'two or more stores are configured.'
+                        : 'You are not authorized to change the global lifecycle policy.';
+                    $this->addFlash('error', $this->trans($message, [], self::ERROR_DOMAIN));
 
                     return $this->redirectToRoute('admin_qrkshipping_preferences');
                 }
@@ -183,5 +204,14 @@ final class PreferencesController extends AbstractQrkShippingController
         }
 
         return $this->redirectToRoute('admin_qrkshipping_preferences');
+    }
+
+    private function lifecyclePolicyAccess(SettingScopeType $scopeType): LifecyclePolicyAccess
+    {
+        return LifecyclePolicyAccess::evaluate(
+            $scopeType,
+            $this->shopTopology->configuredShopCount(),
+            $this->getEmployeeContext()->hasAuthorizationForAllShops(),
+        );
     }
 }

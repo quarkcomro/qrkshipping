@@ -234,6 +234,14 @@
         <source>Lifecycle policy is global. Select the All stores context to change it.</source>
         <target>Politica ciclului de viață este globală. Selectați contextul Toate magazinele pentru a o modifica.</target>
       </trans-unit>
+      <trans-unit id="8789c178c9891ff9">
+        <source>This lifecycle policy is global. Because fewer than two stores are configured, you can edit it from the current store context.</source>
+        <target>Această politică a ciclului de viață este globală. Deoarece sunt configurate mai puțin de două magazine, o puteți edita din contextul magazinului curent.</target>
+      </trans-unit>
+      <trans-unit id="1d7e47741a28f883">
+        <source>You are not authorized for all stores, so the global lifecycle policy is read-only.</source>
+        <target>Nu sunteți autorizat pentru toate magazinele, astfel încât politica globală a ciclului de viață este disponibilă numai pentru citire.</target>
+      </trans-unit>
       <trans-unit id="5ff4b13a5f31a400">
         <source>Delete all QRK Shipping tables and data on uninstall</source>
         <target>Șterge toate tabelele și datele QRK Shipping la dezinstalare</target>

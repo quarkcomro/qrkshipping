@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.3] - 2026-07-16
+
+### Fixed
+
+- Allow an administrator authorized for all stores to edit the global lifecycle policy from the current shop context when fewer than two shops are configured and PrestaShop therefore does not expose the All stores selector.
+- Keep the policy global and require the All stores context as soon as two or more shops are configured.
+- Fail closed when the configured-shop topology or all-shops authorization cannot be established safely.
+- Add unit, smoke, translation and Back Office template regression coverage for the single-shop fallback.
+
 ## [0.1.2] - 2026-07-12
 
 ### Added

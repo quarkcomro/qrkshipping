@@ -185,7 +185,7 @@ jobs:
             --rewrite=0
 
       - name: Install the release ZIP into PrestaShop
-        run: unzip -q dist/qrkshipping-0.1.2.zip -d prestashop/modules
+        run: unzip -q dist/qrkshipping-0.1.3.zip -d prestashop/modules
 
       - name: Install QRK Shipping
         run: |
@@ -283,17 +283,17 @@ jobs:
           SOURCE_DATE_EPOCH: '1783728000'
         run: |
           composer build
-          first_sha="$(cut -d' ' -f1 dist/qrkshipping-0.1.2.zip.sha256)"
+          first_sha="$(cut -d' ' -f1 dist/qrkshipping-0.1.3.zip.sha256)"
           composer build
-          second_sha="$(cut -d' ' -f1 dist/qrkshipping-0.1.2.zip.sha256)"
+          second_sha="$(cut -d' ' -f1 dist/qrkshipping-0.1.3.zip.sha256)"
           test "$first_sha" = "$second_sha"
 
       - name: Upload release evidence
         uses: actions/upload-artifact@v4
         with:
-          name: qrkshipping-0.1.2
+          name: qrkshipping-0.1.3
           path: |
-            dist/qrkshipping-0.1.2.zip
-            dist/qrkshipping-0.1.2.zip.sha256
+            dist/qrkshipping-0.1.3.zip
+            dist/qrkshipping-0.1.3.zip.sha256
             dist/BUILD_REPORT.json
           if-no-files-found: error

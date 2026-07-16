@@ -86,9 +86,9 @@
         <source>By default, Reset retains non-secret data. A global preference can instead recreate the foundation with catalog defaults.</source>
         <target>În mod implicit, Reset păstrează datele nesensibile. O preferință globală poate recrea în schimb fundația cu valorile implicite din catalog.</target>
       </trans-unit>
-      <trans-unit id="77b24e997ee1595c">
-        <source>Lifecycle preferences are editable only in the All stores context.</source>
-        <target>Preferințele ciclului de viață pot fi editate numai în contextul Toate magazinele.</target>
+      <trans-unit id="62be72d53be290bf">
+        <source>Lifecycle preferences remain global. With two or more configured stores, edit them only in the All stores context. With one configured store, authorized administrators can edit the same global policy from the current store context.</source>
+        <target>Preferințele ciclului de viață rămân globale. Dacă sunt configurate două sau mai multe magazine, editați-le numai în contextul Toate magazinele. Dacă este configurat un singur magazin, administratorii autorizați pot edita aceeași politică globală din contextul magazinului curent.</target>
       </trans-unit>
     </body>
   </file>

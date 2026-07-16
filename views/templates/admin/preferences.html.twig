@@ -89,35 +89,40 @@
         <div class="alert alert-danger mb-0">
           {{ 'The global lifecycle policy could not be read safely. Editing is disabled.'|trans({}, 'Modules.Qrkshipping.Errors') }}
         </div>
+      {% elseif not lifecyclePolicyAccessReadable %}
+        <div class="alert alert-danger">
+          {{ 'The global lifecycle policy access rules could not be evaluated safely. Editing is disabled.'|trans({}, 'Modules.Qrkshipping.Errors') }}
+        </div>
+        <dl class="row mb-0">
+          <dt class="col-sm-7">{{ 'Delete all QRK Shipping tables and data on uninstall'|trans }}</dt>
+          <dd class="col-sm-5">
+            {% if purgeOnUninstall %}
+              <span class="badge badge-danger">{{ 'Enabled'|trans }}</span>
+            {% else %}
+              <span class="badge badge-secondary">{{ 'Disabled'|trans }}</span>
+            {% endif %}
+          </dd>
+          <dt class="col-sm-7">{{ 'Reset all QRK Shipping data to catalog defaults on module reset'|trans }}</dt>
+          <dd class="col-sm-5">
+            {% if resetToDefaults %}
+              <span class="badge badge-danger">{{ 'Enabled'|trans }}</span>
+            {% else %}
+              <span class="badge badge-secondary">{{ 'Disabled'|trans }}</span>
+            {% endif %}
+          </dd>
+        </dl>
       {% else %}
         <div class="alert alert-warning">
           <p class="mb-1"><strong>{{ 'These options control destructive module lifecycle operations.'|trans }}</strong></p>
           <p class="mb-0">{{ 'Encrypted secrets are always deleted during uninstall and reset. Enabled destructive options permanently remove additional QRK Shipping data.'|trans }}</p>
         </div>
 
-        {% if shopContext.type != 'all' %}
-          <div class="alert alert-info">
-            {{ 'Lifecycle policy is global. Select the All stores context to change it.'|trans }}
-          </div>
-          <dl class="row mb-0">
-            <dt class="col-sm-7">{{ 'Delete all QRK Shipping tables and data on uninstall'|trans }}</dt>
-            <dd class="col-sm-5">
-              {% if purgeOnUninstall %}
-                <span class="badge badge-danger">{{ 'Enabled'|trans }}</span>
-              {% else %}
-                <span class="badge badge-secondary">{{ 'Disabled'|trans }}</span>
-              {% endif %}
-            </dd>
-            <dt class="col-sm-7">{{ 'Reset all QRK Shipping data to catalog defaults on module reset'|trans }}</dt>
-            <dd class="col-sm-5">
-              {% if resetToDefaults %}
-                <span class="badge badge-danger">{{ 'Enabled'|trans }}</span>
-              {% else %}
-                <span class="badge badge-secondary">{{ 'Disabled'|trans }}</span>
-              {% endif %}
-            </dd>
-          </dl>
-        {% else %}
+        {% if lifecyclePolicyEditable %}
+          {% if lifecyclePolicySingleShopFallback %}
+            <div class="alert alert-info">
+              {{ 'This lifecycle policy is global. Because fewer than two stores are configured, you can edit it from the current store context.'|trans }}
+            </div>
+          {% endif %}
           <form method="post" action="{{ path('admin_qrkshipping_preferences_update') }}">
             <input type="hidden" name="_token" value="{{ csrfToken }}">
             <input type="hidden" name="action" value="save_lifecycle_policy">
@@ -156,6 +161,34 @@
 
             <button class="btn btn-primary" type="submit">{{ 'Save lifecycle policy'|trans }}</button>
           </form>
+        {% else %}
+          {% if lifecyclePolicyAuthorizedForAllShops %}
+            <div class="alert alert-info">
+              {{ 'Lifecycle policy is global. Select the All stores context to change it.'|trans }}
+            </div>
+          {% else %}
+            <div class="alert alert-warning">
+              {{ 'You are not authorized for all stores, so the global lifecycle policy is read-only.'|trans }}
+            </div>
+          {% endif %}
+          <dl class="row mb-0">
+            <dt class="col-sm-7">{{ 'Delete all QRK Shipping tables and data on uninstall'|trans }}</dt>
+            <dd class="col-sm-5">
+              {% if purgeOnUninstall %}
+                <span class="badge badge-danger">{{ 'Enabled'|trans }}</span>
+              {% else %}
+                <span class="badge badge-secondary">{{ 'Disabled'|trans }}</span>
+              {% endif %}
+            </dd>
+            <dt class="col-sm-7">{{ 'Reset all QRK Shipping data to catalog defaults on module reset'|trans }}</dt>
+            <dd class="col-sm-5">
+              {% if resetToDefaults %}
+                <span class="badge badge-danger">{{ 'Enabled'|trans }}</span>
+              {% else %}
+                <span class="badge badge-secondary">{{ 'Disabled'|trans }}</span>
+              {% endif %}
+            </dd>
+          </dl>
         {% endif %}
       {% endif %}
     </div>

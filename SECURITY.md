@@ -16,5 +16,5 @@ Report suspected vulnerabilities privately to the project owner. Do not include 
 - No executable asset is loaded from a CDN.
 - No provider HTTP request exists in Increment 1.
 - Encrypted secret rows are always removed during uninstall and Reset.
-- Destructive lifecycle behavior is disabled by default, stored globally, editable only in the All stores context and activated explicitly by an authorized administrator.
+- Destructive lifecycle behavior is disabled by default and stored globally. With two or more configured stores it is editable only in the All stores context; with one configured store, an administrator authorized for all stores may edit it from the current store context.
 - Destructive uninstall removes only tables in the module-owned `<database-prefix>qrkship_` namespace; returned identifiers are validated before they are quoted and dropped.

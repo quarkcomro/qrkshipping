@@ -234,6 +234,14 @@
         <source>Lifecycle policy is global. Select the All stores context to change it.</source>
         <target>Lifecycle policy is global. Select the All stores context to change it.</target>
       </trans-unit>
+      <trans-unit id="8789c178c9891ff9">
+        <source>This lifecycle policy is global. Because fewer than two stores are configured, you can edit it from the current store context.</source>
+        <target>This lifecycle policy is global. Because fewer than two stores are configured, you can edit it from the current store context.</target>
+      </trans-unit>
+      <trans-unit id="1d7e47741a28f883">
+        <source>You are not authorized for all stores, so the global lifecycle policy is read-only.</source>
+        <target>You are not authorized for all stores, so the global lifecycle policy is read-only.</target>
+      </trans-unit>
       <trans-unit id="5ff4b13a5f31a400">
         <source>Delete all QRK Shipping tables and data on uninstall</source>
         <target>Delete all QRK Shipping tables and data on uninstall</target>

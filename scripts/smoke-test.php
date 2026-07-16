@@ -7,6 +7,7 @@ use Qrk\Commerce\Shipping\Adapter\PrestaShop\Lifecycle\LifecycleOperationDetecto
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection;
 use Qrk\Commerce\Shipping\Application\Lifecycle\LifecycleOperation;
 use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicy;
+use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicyAccess;
 use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicyService;
 use Qrk\Commerce\Shipping\Application\Security\SecretStoreService;
 use Qrk\Commerce\Shipping\Application\Settings\SettingValueCodec;
@@ -18,6 +19,7 @@ use Qrk\Commerce\Shipping\Domain\Money\RoundingMode;
 use Qrk\Commerce\Shipping\Domain\Security\MasterKey;
 use Qrk\Commerce\Shipping\Domain\Security\SecretLocator;
 use Qrk\Commerce\Shipping\Domain\Settings\SettingScope;
+use Qrk\Commerce\Shipping\Domain\Settings\SettingScopeType;
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\MigrationRecorder;
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaCatalog;
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaInstallationException;
@@ -212,6 +214,17 @@ $lifecycle->save(true, true, AuditActor::employee(1));
 $assert($lifecycle->current()->purgeOnUninstall(), 'Lifecycle uninstall policy was not saved.');
 $assert($lifecycle->current()->resetToDefaults(), 'Lifecycle reset policy was not saved.');
 
+$singleShopAccess = LifecyclePolicyAccess::evaluate(SettingScopeType::SHOP, 1, true);
+$assert($singleShopAccess->canEdit(), 'Single-shop global lifecycle editing was not enabled.');
+$assert(
+    $singleShopAccess->usesSingleShopFallback(),
+    'Single-shop global lifecycle editing did not report its fallback mode.',
+);
+$multiShopAccess = LifecyclePolicyAccess::evaluate(SettingScopeType::SHOP, 2, true);
+$assert(!$multiShopAccess->canEdit(), 'Shop context bypassed All stores with multiple configured shops.');
+$unauthorizedAccess = LifecyclePolicyAccess::evaluate(SettingScopeType::SHOP, 1, false);
+$assert(!$unauthorizedAccess->canEdit(), 'All-shops authorization was not enforced.');
+
 if (!defined('_PS_VERSION_')) {
     define('_PS_VERSION_', '9.1.4');
 }
@@ -229,6 +242,8 @@ $upgradeProbe = new class {
 };
 $assert(upgrade_module_0_1_2($upgradeProbe), 'The 0.1.2 upgrade entrypoint failed.');
 $assert($upgradeProbe->hooks === ['actionBeforeResetModule'], 'The reset lifecycle hook was not upgraded.');
+require_once $root . '/upgrade/upgrade-0.1.3.php';
+$assert(upgrade_module_0_1_3($upgradeProbe), 'The 0.1.3 upgrade entrypoint failed.');
 
 $consoleResetDetector = new LifecycleOperationDetector(null, [
     'bin/console',

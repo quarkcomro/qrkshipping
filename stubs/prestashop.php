@@ -48,6 +48,14 @@ namespace {
         public static function getLanguages(bool $active = true): array { return []; }
     }
 
+    final class Shop
+    {
+        public static function getTotalShops(bool $active = true, int|null $shopGroupId = null): int
+        {
+            return 1;
+        }
+    }
+
     final class Tools
     {
         public static function redirectAdmin(string $url): void {}

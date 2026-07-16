@@ -8,15 +8,18 @@ use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use PrestaShopBundle\Security\Attribute\DemoRestricted;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Install\FoundationFactory;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Multistore\ShopContextResolver;
+use Qrk\Commerce\Shipping\Adapter\PrestaShop\Multistore\ShopTopology;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Persistence\PrestaShopDatabaseConnection;
 use Qrk\Commerce\Shipping\Adapter\PrestaShop\Security\PrestaShopMasterKeyProvider;
 use Qrk\Commerce\Shipping\Controller\Admin\DashboardController;
 use Qrk\Commerce\Shipping\Controller\Admin\DiagnosticsController;
 use Qrk\Commerce\Shipping\Controller\Admin\HelpController;
+use Qrk\Commerce\Shipping\Application\Lifecycle\LifecyclePolicyAccess;
 use Qrk\Commerce\Shipping\Application\Settings\SettingsCatalog;
 use Qrk\Commerce\Shipping\Controller\Admin\PreferencesController;
 use Qrk\Commerce\Shipping\Domain\Audit\AuditActor;
 use Qrk\Commerce\Shipping\Domain\Settings\SettingScope;
+use Qrk\Commerce\Shipping\Domain\Settings\SettingScopeType;
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\MigrationRecorder;
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaCatalog;
 use Qrk\Commerce\Shipping\Infrastructure\Persistence\Schema\SchemaInspector;
@@ -325,6 +328,22 @@ if ($installed) {
         $resolved = (new ShopContextResolver($shopContext))->current();
         $assert($resolved->scope()->equals($expectedScope), 'PrestaShop multistore context mapping failed.');
     }
+
+    $configuredShopCount = (new ShopTopology())->configuredShopCount();
+    $assert($configuredShopCount === 1, 'The runtime fixture does not contain exactly one configured shop.');
+    $singleShopPolicyAccess = LifecyclePolicyAccess::evaluate(
+        SettingScopeType::SHOP,
+        $configuredShopCount,
+        true,
+    );
+    $assert(
+        $singleShopPolicyAccess->canEdit() && $singleShopPolicyAccess->usesSingleShopFallback(),
+        'The single-shop global lifecycle-policy fallback is unavailable.',
+    );
+    $assert(
+        !LifecyclePolicyAccess::evaluate(SettingScopeType::SHOP, 2, true)->canEdit(),
+        'A shop context can edit global lifecycle policy when two shops are configured.',
+    );
 }
 
 $seedRetainedData = static function () use ($connection, $prefix): void {

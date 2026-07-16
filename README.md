@@ -20,7 +20,7 @@ The first increment is deliberately operationally inert:
 
 ## Lifecycle data policy
 
-Lifecycle options are global and can be edited only in the **All stores** context under **QRK Shipping > Preferences**.
+Lifecycle options are global. With two or more configured stores they can be edited only in the **All stores** context under **QRK Shipping > Preferences**. With one configured store, an administrator authorized for all stores can edit the same global policy from the current store context.
 
 The defaults are non-destructive:
 

@@ -82,9 +82,17 @@
         <source>The global lifecycle policy could not be read safely. Editing is disabled.</source>
         <target>The global lifecycle policy could not be read safely. Editing is disabled.</target>
       </trans-unit>
-      <trans-unit id="8d9ac9480feea9e5">
-        <source>Lifecycle policy can be changed only in the All stores context.</source>
-        <target>Lifecycle policy can be changed only in the All stores context.</target>
+      <trans-unit id="496d03fa6861f50a">
+        <source>Lifecycle policy can be changed only in the All stores context when two or more stores are configured.</source>
+        <target>Lifecycle policy can be changed only in the All stores context when two or more stores are configured.</target>
+      </trans-unit>
+      <trans-unit id="8160d8bb8776127f">
+        <source>You are not authorized to change the global lifecycle policy.</source>
+        <target>You are not authorized to change the global lifecycle policy.</target>
+      </trans-unit>
+      <trans-unit id="2f47d0832c09aa55">
+        <source>The global lifecycle policy access rules could not be evaluated safely. Editing is disabled.</source>
+        <target>The global lifecycle policy access rules could not be evaluated safely. Editing is disabled.</target>
       </trans-unit>
       <trans-unit id="935caf3d3b73879f">
         <source>Uninstall was stopped because the global lifecycle policy could not be read safely.</source>
